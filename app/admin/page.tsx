@@ -25,6 +25,12 @@ interface AssessmentData {
   produk: string;
   skor_total: number;
   target_negara: string;
+  ai_insights: Array<{
+    id: string;
+    label: string;
+    detail: string;
+    status: 'success' | 'warning' | 'error';
+  }> | null;
   created_at: string;
 }
 
@@ -129,6 +135,7 @@ export default function AdminPage() {
                 <th style={thStyle}>PRODUK</th>
                 <th style={thStyle}>TARGET</th>
                 <th style={thStyle}>SKOR ERS</th>
+                <th style={thStyle}>AI INSIGHTS</th>
                 <th style={thStyle}>STATUS</th>
                 <th style={thStyle}></th>
               </tr>
@@ -163,6 +170,20 @@ export default function AdminPage() {
                   <td style={tdStyle}>
                     <div style={{ fontWeight: 800, fontSize: 16, color: (item.skor_total || 0) >= 80 ? "#2E7D52" : (item.skor_total || 0) >= 60 ? "#D4A017" : "#B5341A" }}>
                       {item.skor_total || 0}
+                    </div>
+                  </td>
+                  <td style={tdStyle}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                      {item.ai_insights ? (
+                        item.ai_insights.slice(0, 2).map((insight, idx) => (
+                          <div key={idx} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11 }}>
+                             {insight.status === 'success' ? <CheckCircle2 size={12} color="#2E7D52" /> : <AlertCircle size={12} color="#D4A017" />}
+                             <span style={{ color: "#5A6878" }}>{insight.label}</span>
+                          </div>
+                        ))
+                      ) : (
+                        <div style={{ color: "#8899AA", fontSize: 11, fontStyle: "italic" }}>No AI analysis</div>
+                      )}
                     </div>
                   </td>
                   <td style={tdStyle}>

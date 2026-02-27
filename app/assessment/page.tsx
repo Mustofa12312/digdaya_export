@@ -6,6 +6,7 @@ import FileUploadZone from "@/components/FileUploadZone";
 import { PROVINSI_LIST, KATEGORI_PRODUK, BAHASA_DAERAH } from "@/lib/indonesia-regions";
 import { getMarketOpportunities } from "@/lib/market-data";
 import { mockAnalyzePackaging, mockValidateDocument, type PackagingAnalysisResult } from "@/lib/ers-engine";
+import { analyzePackagingWithAI } from "@/lib/gemini";
 import { supabase } from "@/lib/supabase";
 import toast from "react-hot-toast";
 import { Loader2, Mic, MicOff, FlaskConical, Volume2, VolumeX, CheckCircle, AlertTriangle, XCircle } from "lucide-react";
@@ -317,12 +318,29 @@ export default function AssessmentPage() {
 
   const handleAnalyzePackaging = async () => {
     setAnalyzing(true);
-    const result = await mockAnalyzePackaging(form.kemasanFiles.length > 0 ? form.kemasanFiles : [new File([], "demo.jpg")], form.targetNegara);
-    update("kemasanScore", result.score);
-    update("kemasanInsights", result.insights);
-    setAnalyzing(false);
-    toast.success(`Analisis selesai! Skor kemasan: ${result.score}/100`);
-    if (assistantActive) speak(`Analisis selesai. Skor kemasan Anda adalah ${result.score}.`);
+    try {
+      let result;
+      // If user uploaded a file and we have an API key, use REAL AI
+      if (form.kemasanFiles.length > 0 && process.env.NEXT_PUBLIC_GOOGLE_GEMINI_API_KEY) {
+        result = await analyzePackagingWithAI(form.kemasanFiles[0], form.targetNegara);
+      } else {
+        // Fallback to mock for demo/no-key
+        result = await mockAnalyzePackaging(form.kemasanFiles.length > 0 ? form.kemasanFiles : [new File([], "demo.jpg")], form.targetNegara);
+      }
+      
+      update("kemasanScore", result.score);
+      update("kemasanInsights", result.insights);
+      toast.success(`Analisis AI Selesai! Skor: ${result.score}/100`);
+      if (assistantActive) speak(`Analisis selesai. Skor kemasan Anda adalah ${result.score}.`);
+    } catch (err) {
+      console.error(err);
+      toast.error("Gagal melakukan analisis AI. Menggunakan mode simulasi.");
+      const fallback = await mockAnalyzePackaging([new File([], "demo.jpg")], form.targetNegara);
+      update("kemasanScore", fallback.score);
+      update("kemasanInsights", fallback.insights);
+    } finally {
+      setAnalyzing(false);
+    }
   };
 
   const handleValidateDoc = async () => {
@@ -346,6 +364,7 @@ export default function AssessmentPage() {
         produk: form.namaProduk,
         skor_total: form.kemasanScore, // Focus on core score for demo
         target_negara: form.targetNegara,
+        ai_insights: form.kemasanInsights,
         created_at: new Date().toISOString()
       }]);
       console.log("Assessment successfully synced to Supabase");
