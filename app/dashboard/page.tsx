@@ -10,7 +10,7 @@ import {
 } from "recharts";
 import toast from "react-hot-toast";
 import Link from "next/link";
-import { Printer, Share2, SlidersHorizontal, ChevronDown, ChevronUp, ArrowLeft } from "lucide-react";
+import { Printer, Share2, SlidersHorizontal, ChevronDown, ChevronUp, ArrowLeft, Award } from "lucide-react";
 
 const DIMENSION_LABELS: Record<string, string> = {
   legalitas: "Legalitas", kualitas: "Kualitas", kemasan: "Kemasan", kapasitas: "Kapasitas", pasar: "Pasar",
@@ -219,6 +219,9 @@ function DashboardContent() {
           </button>
           <button onClick={handlePrint} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 16px", borderRadius: 10, border: "none", background: "rgba(26,58,92,0.09)", color: "#1A3A5C", fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>
             <Printer size={14} /> Export PDF
+          </button>
+          <button onClick={() => toast.success("Sertifikat ERS sedang disiapkan...")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 16px", borderRadius: 10, border: "none", background: "linear-gradient(135deg, #2E7D52, #3FA86E)", color: "white", fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 13, cursor: "pointer", boxShadow: "0 4px 12px rgba(46,125,82,0.2)" }}>
+            <Award size={14} /> Download Sertifikat
           </button>
           <button onClick={handleShareWA} className="share-btn share-wa">
             <Share2 size={14} /> Bagikan ke WhatsApp

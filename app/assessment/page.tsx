@@ -29,6 +29,51 @@ const DEMO_PRODUK = {
   satuan: "kg",
 };
 
+const TRANSLATIONS: Record<string, Record<string, string>> = {
+  id: {
+    title: "Formulir Validasi UMKM",
+    subtitle: "Isi langkah demi langkah — hanya 3–5 menit",
+    next: "Lanjut",
+    back: "Kembali",
+    finish: "Hitung ERS Saya",
+    profile: "Profil Usaha",
+    product: "Data Produk",
+    packaging: "Foto Kemasan",
+    legality: "Dokumen Legalitas",
+    market: "Pasar Tujuan",
+    assistant_on: "Asisten Suara Aktif",
+    assistant_off: "Aktifkan Panduan Suara",
+  },
+  jv: {
+    title: "Formulir Validasi UMKM",
+    subtitle: "Isian langkah demi langkah — namung 3–5 menit",
+    next: "Lajeng",
+    back: "Wangsul",
+    finish: "Etang ERS Kulo",
+    profile: "Profil Usaha",
+    product: "Data Produk",
+    packaging: "Foto Wadah",
+    legality: "Layang Legalitas",
+    market: "Negoro Tujuan",
+    assistant_on: "Asisten Swanten Aktif",
+    assistant_off: "Aktifke Panduan Swanten",
+  },
+  su: {
+    title: "Formulir Validasi UMKM",
+    subtitle: "Eusi hambalan demi hambalan — mung 3–5 menit",
+    next: "Lajeng",
+    back: "Wangsul",
+    finish: "Itung ERS Abdi",
+    profile: "Profil Usaha",
+    product: "Data Produk",
+    packaging: "Poto Bungkus",
+    legality: "Dokumen Legalitas",
+    market: "Nagara Tujuan",
+    assistant_on: "Asisten Sora Aktif",
+    assistant_off: "Aktifkeun Pitulung Sora",
+  }
+};
+
 interface FormData {
   namaUsaha: string; pemilikNama: string; noTelepon: string;
   provinsi: string; kabupaten: string; bahasaDaerah: string;
@@ -168,6 +213,40 @@ function DemoBanner({ onFill }: { onFill: () => void }) {
   );
 }
 
+// ─── AI Vision Overlay ──────────────────────────────────────────────────────
+function ScanningOverlay() {
+  return (
+    <div style={{
+      position: "absolute", inset: 0, zIndex: 10,
+      background: "rgba(26,58,92,0.4)", display: "flex",
+      flexDirection: "column", alignItems: "center", justifyContent: "center",
+      borderRadius: 14, overflow: "hidden", backdropFilter: "blur(2px)"
+    }}>
+      <div style={{
+        position: "absolute", top: 0, left: 0, right: 0, height: 2,
+        background: "linear-gradient(90deg, transparent, #F0C040, transparent)",
+        boxShadow: "0 0 15px #F0C040",
+        animation: "scanLine 2.5s ease-in-out infinite",
+      }} />
+      <div style={{
+        position: "absolute", inset: 0,
+        background: "repeating-linear-gradient(0deg, rgba(212,160,23,0.05) 0px, transparent 1px, transparent 20px)",
+        backgroundSize: "100% 20px"
+      }} />
+      <Loader2 size={40} color="#F0C040" style={{ animation: "spin 1s linear infinite", marginBottom: 12 }} />
+      <div style={{ color: "white", fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 14, letterSpacing: "0.1em" }}>ANALYZING DESIGN...</div>
+      <style>{`
+        @keyframes scanLine {
+          0% { top: 0%; opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { top: 100%; opacity: 0; }
+        }
+      `}</style>
+    </div>
+  );
+}
+
 // ─── Main Page ───────────────────────────────────────────────────────────────
 export default function AssessmentPage() {
   const router = useRouter();
@@ -282,13 +361,15 @@ export default function AssessmentPage() {
     border: "1px solid rgba(212,160,23,0.12)",
   };
 
+  const t = TRANSLATIONS[form.bahasaDaerah] || TRANSLATIONS.id;
+
   return (
     <div style={{ minHeight: "100vh", background: "var(--krem-linen)", padding: "100px 24px 60px" }} className="pattern-batik page-enter">
       <div style={{ maxWidth: 740, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <div style={{ fontSize: 13, fontWeight: 600, color: "#D4A017", letterSpacing: "0.08em", marginBottom: 8 }}>PENILAIAN KESIAPAN EKSPOR</div>
-          <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 32, color: "#1A3A5C", marginBottom: 4 }}>Formulir Validasi UMKM</h1>
-          <p style={{ color: "#8899AA", fontSize: 15 }}>Isi langkah demi langkah — hanya 3–5 menit</p>
+          <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 32, color: "#1A3A5C", marginBottom: 4 }}>{t.title}</h1>
+          <p style={{ color: "#8899AA", fontSize: 15 }}>{t.subtitle}</p>
         </div>
 
         <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
@@ -303,7 +384,7 @@ export default function AssessmentPage() {
             }}
           >
             {assistantActive ? <Volume2 size={16} color="#D4A017" /> : <VolumeX size={16} color="#8899AA" />}
-            {assistantActive ? "Asisten Suara Aktif" : "Aktifkan Panduan Suara"}
+            {assistantActive ? t.assistant_on : t.assistant_off}
           </button>
         </div>
 
@@ -314,7 +395,7 @@ export default function AssessmentPage() {
         {step === 1 && (
           <div style={cardStyle} className="page-enter">
             <DemoBanner onFill={fillDemoProfile} />
-            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 22, color: "#1A3A5C", marginBottom: 24 }}>🏪 Profil Usaha</h2>
+            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 22, color: "#1A3A5C", marginBottom: 24 }}>🏪 {t.profile}</h2>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
               <div style={{ gridColumn: "1 / -1" }}>
                 <VoiceInput id="namaUsaha" label="Nama Usaha / Brand" value={form.namaUsaha} onChange={v => update("namaUsaha", v)} placeholder="Contoh: Kopi Gayo Bu Aminah" />
@@ -334,7 +415,7 @@ export default function AssessmentPage() {
         {step === 2 && (
           <div style={cardStyle} className="page-enter">
             <DemoBanner onFill={fillDemoProduk} />
-            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 22, color: "#1A3A5C", marginBottom: 24 }}>📦 Data Produk</h2>
+            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 22, color: "#1A3A5C", marginBottom: 24 }}>📦 {t.product}</h2>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
               <div style={{ gridColumn: "1 / -1" }}>
                 <VoiceInput id="namaProduk" label="Nama Produk" value={form.namaProduk} onChange={v => update("namaProduk", v)} placeholder="Contoh: Keripik Tempe Rempah Original" />
@@ -351,7 +432,7 @@ export default function AssessmentPage() {
         {/* STEP 3 */}
         {step === 3 && (
           <div style={cardStyle} className="page-enter">
-            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 22, color: "#1A3A5C", marginBottom: 8 }}>🖼️ Foto Kemasan Produk</h2>
+            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 22, color: "#1A3A5C", marginBottom: 8 }}>🖼️ {t.packaging}</h2>
             <p style={{ fontSize: 14, color: "#8899AA", marginBottom: 20 }}>Upload foto kemasan depan dan belakang, atau gunakan Demo Mode untuk simulasi instan.</p>
 
             {/* Demo shortcut */}
@@ -369,13 +450,16 @@ export default function AssessmentPage() {
               </div>
             )}
 
-            <FileUploadZone
-              onFiles={files => { update("kemasanFiles", files); if (files.length === 0) update("kemasanScore", null); }}
-              accept={{ "image/*": [".jpg", ".jpeg", ".png", ".webp"] }}
-              maxFiles={4}
-              label="Upload Foto Kemasan"
-              hint="Seret & lepas foto kemasan di sini, atau klik untuk pilih"
-            />
+            <div style={{ position: "relative" }}>
+              <FileUploadZone
+                onFiles={files => { update("kemasanFiles", files); if (files.length === 0) update("kemasanScore", null); }}
+                accept={{ "image/*": [".jpg", ".jpeg", ".png", ".webp"] }}
+                maxFiles={4}
+                label="Upload Foto Kemasan"
+                hint="Seret & lepas foto kemasan di sini, atau klik untuk pilih"
+              />
+              {analyzing && <ScanningOverlay />}
+            </div>
 
             {form.kemasanFiles.length > 0 && form.kemasanScore === null && (
               <button onClick={handleAnalyzePackaging} disabled={analyzing} style={{
@@ -434,7 +518,7 @@ export default function AssessmentPage() {
         {/* STEP 4 */}
         {step === 4 && (
           <div style={cardStyle} className="page-enter">
-            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 22, color: "#1A3A5C", marginBottom: 8 }}>📋 Dokumen Legalitas</h2>
+            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 22, color: "#1A3A5C", marginBottom: 8 }}>📋 {t.legality}</h2>
             <p style={{ fontSize: 14, color: "#8899AA", marginBottom: 20 }}>Upload dokumen perizinan atau gunakan Demo Mode untuk verifikasi instan.</p>
 
             {form.dokumenScore === null && (
@@ -492,7 +576,7 @@ export default function AssessmentPage() {
         {/* STEP 5 */}
         {step === 5 && (
           <div style={cardStyle} className="page-enter">
-            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 22, color: "#1A3A5C", marginBottom: 8 }}>🌏 Pilih Pasar Tujuan Ekspor</h2>
+            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 22, color: "#1A3A5C", marginBottom: 8 }}>🌏 {t.market}</h2>
             <p style={{ fontSize: 14, color: "#8899AA", marginBottom: 24 }}>ERS Anda akan disesuaikan dengan regulasi negara yang dipilih.</p>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(145px, 1fr))", gap: 12 }}>
               {MARKETS.map(m => (
@@ -528,7 +612,7 @@ export default function AssessmentPage() {
         {/* Navigation */}
         <div style={{ display: "flex", justifyContent: "space-between", marginTop: 24, maxWidth: 680, margin: "24px auto 0" }}>
           {step > 1 ? (
-            <button onClick={() => setStep(s => s - 1)} style={{ padding: "12px 28px", borderRadius: 12, border: "1.5px solid rgba(26,58,92,0.2)", background: "white", color: "#1A3A5C", fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 15, cursor: "pointer" }}>← Kembali</button>
+            <button onClick={() => setStep(s => s - 1)} style={{ padding: "12px 28px", borderRadius: 12, border: "1.5px solid rgba(26,58,92,0.2)", background: "white", color: "#1A3A5C", fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 15, cursor: "pointer" }}>← {t.back}</button>
           ) : <div />}
           {step < 5 ? (
             <button onClick={() => { if (canNext[step]) setStep(s => s + 1); else toast.error("Lengkapi semua data sebelum melanjutkan"); }} style={{
@@ -537,14 +621,14 @@ export default function AssessmentPage() {
               color: canNext[step] ? "#1A3A5C" : "#8899AA",
               fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 15, cursor: "pointer",
               boxShadow: canNext[step] ? "0 4px 16px rgba(212,160,23,0.3)" : "none",
-            }}>Lanjut →</button>
+            }}>{t.next} →</button>
           ) : (
             <button onClick={handleSubmit} style={{
               padding: "13px 40px", borderRadius: 12, border: "none",
               background: "linear-gradient(135deg, #2E7D52, #3FA86E)", color: "white",
               fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 16, cursor: "pointer",
               boxShadow: "0 4px 20px rgba(46,125,82,0.35)",
-            }}>🚀 Hitung ERS Saya</button>
+            }}>🚀 {t.finish}</button>
           )}
         </div>
       </div>
