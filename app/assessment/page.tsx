@@ -6,6 +6,7 @@ import FileUploadZone from "@/components/FileUploadZone";
 import { PROVINSI_LIST, KATEGORI_PRODUK, BAHASA_DAERAH } from "@/lib/indonesia-regions";
 import { getMarketOpportunities } from "@/lib/market-data";
 import { mockAnalyzePackaging, mockValidateDocument, type PackagingAnalysisResult } from "@/lib/ers-engine";
+import { supabase } from "@/lib/supabase";
 import toast from "react-hot-toast";
 import { Loader2, Mic, MicOff, FlaskConical, Volume2, VolumeX, CheckCircle, AlertTriangle, XCircle } from "lucide-react";
 
@@ -333,9 +334,25 @@ export default function AssessmentPage() {
     toast.success("Dokumen terverifikasi!");
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const kapasitasScore = Math.min(95, Math.max(35, (parseInt(form.kapasitasBulanan) / 5) + 30));
     const pasarScore = MARKETS.find(m => m.kode === form.targetNegara)?.peluangScore ?? 70;
+
+    // Save to Supabase (Background)
+    try {
+      await supabase.from('assessments').insert([{
+        nama_usaha: form.namaUsaha,
+        pemilik: form.pemilikNama,
+        produk: form.namaProduk,
+        skor_total: form.kemasanScore, // Focus on core score for demo
+        target_negara: form.targetNegara,
+        created_at: new Date().toISOString()
+      }]);
+      console.log("Assessment successfully synced to Supabase");
+    } catch (err) {
+      console.warn("Database sync failed, but proceeding locally:", err);
+    }
+
     const params = new URLSearchParams({
       namaUsaha: form.namaUsaha,
       namaProduk: form.namaProduk,
