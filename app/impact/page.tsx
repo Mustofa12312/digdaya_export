@@ -115,49 +115,52 @@ export default function ImpactPage() {
         <div style={{ background: "white", borderRadius: 20, padding: "32px", boxShadow: "0 4px 20px rgba(26,58,92,0.07)", marginBottom: 28 }}>
           <div style={{ textAlign: "center", marginBottom: 28 }}>
             <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 18, color: "#1A3A5C" }}>🗺️ Heatmap Kesiapan Ekspor Nasional</h3>
-            <p style={{ fontSize: 13, color: "#8899AA", marginTop: 4 }}>Warna lebih gelap menunjukkan konsentrasi UMKM Siap Ekspor (ERS ≥ 80) lebih tinggi</p>
+            <p style={{ fontSize: 13, color: "#8899AA", marginTop: 4 }}>Arahkan kursor ke wilayah untuk melihat populasi UMKM</p>
           </div>
           
-          <div style={{ position: "relative", width: "100%", height: 320, background: "rgba(26,58,92,0.02)", borderRadius: 16, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-             {/* Simplified SVG Roadmap of Indonesia for visualization */}
+          <div style={{ position: "relative", width: "100%", height: 350, background: "rgba(26,58,92,0.02)", borderRadius: 16, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }} className="map-container">
              <svg viewBox="0 0 800 350" style={{ width: "90%", height: "auto" }}>
                {/* Sumatra */}
-               <path d="M50,150 L150,50 L250,150 L220,180 L180,250 Z" fill="#1A3A5C" fillOpacity="0.8" stroke="white" strokeWidth="2">
-                 <title>Sumatera: 12.4K UMKM</title>
+               <path d="M50,150 L150,50 L250,150 L220,180 L180,250 Z" fill="#1A3A5C" fillOpacity="0.85" stroke="white" strokeWidth="2" className="island-path">
+                 <title>Sumatera: 12.430 UMKM · Indeks: Tinggi</title>
                </path>
                {/* Jawa */}
-               <path d="M260,260 L450,260 L450,280 L260,280 Z" fill="#D4A017" fillOpacity="0.9" stroke="white" strokeWidth="2">
-                 <title>Jawa: 45.2K UMKM</title>
+               <path d="M260,260 L450,260 L450,280 L260,280 Z" fill="#D4A017" fillOpacity="0.95" stroke="white" strokeWidth="2" className="island-path">
+                 <title>Jawa: 45.210 UMKM · Indeks: Sangat Tinggi</title>
                </path>
                {/* Kalimantan */}
-               <path d="M300,50 L450,50 L450,180 L300,180 Z" fill="#1A3A5C" fillOpacity="0.6" stroke="white" strokeWidth="2">
-                 <title>Kalimantan: 8.1K UMKM</title>
+               <path d="M300,50 L450,50 L450,180 L300,180 Z" fill="#1A3A5C" fillOpacity="0.65" stroke="white" strokeWidth="2" className="island-path">
+                 <title>Kalimantan: 8.120 UMKM · Indeks: Menengah</title>
                </path>
                {/* Sulawesi */}
-               <path d="M480,80 L550,80 L550,220 L480,220 L510,150 Z" fill="#1A3A5C" fillOpacity="0.4" stroke="white" strokeWidth="2">
-                 <title>Sulawesi: 9.6K UMKM</title>
+               <path d="M480,80 L550,80 L550,220 L480,220 L510,150 Z" fill="#1A3A5C" fillOpacity="0.5" stroke="white" strokeWidth="2" className="island-path">
+                 <title>Sulawesi: 9.650 UMKM · Indeks: Menengah</title>
                </path>
                {/* Papua */}
-               <path d="M650,150 L780,150 L780,250 L650,250 Z" fill="#1A3A5C" fillOpacity="0.2" stroke="white" strokeWidth="2">
-                 <title>Papua: 2.3K UMKM</title>
+               <path d="M650,150 L780,150 L780,250 L650,250 Z" fill="#1A3A5C" fillOpacity="0.3" stroke="white" strokeWidth="2" className="island-path">
+                 <title>Papua: 2.340 UMKM · Indeks: Tahap Awal</title>
                </path>
                {/* Dots for other islands */}
-               <circle cx="500" cy="270" r="10" fill="#2E7D52" opacity="0.6" />
-               <circle cx="530" cy="275" r="8" fill="#2E7D52" opacity="0.5" />
-               <circle cx="560" cy="280" r="12" fill="#2E7D52" opacity="0.7" />
+               <circle cx="500" cy="270" r="10" fill="#2E7D52" opacity="0.6" className="island-path"><title>Bali & Nusa Tenggara</title></circle>
+               <circle cx="530" cy="275" r="8" fill="#2E7D52" opacity="0.5" className="island-path"><title>Maluku</title></circle>
+               <circle cx="560" cy="280" r="12" fill="#2E7D52" opacity="0.7" className="island-path"><title>Papua Barat</title></circle>
              </svg>
 
              {/* Legend */}
              <div style={{ position: "absolute", bottom: 16, right: 16, background: "rgba(255,255,255,0.9)", padding: "10px", borderRadius: 8, border: "1px solid rgba(26,58,92,0.1)", fontSize: 11 }}>
                <div style={{ fontWeight: 700, marginBottom: 6, color: "#1A3A5C" }}>Indeks Kesiapan</div>
                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-                 <div style={{ width: 12, height: 12, background: "#D4A017" }} /> <span>Sangat Tinggi</span>
+                 <div style={{ width: 12, height: 12, background: "#D4A017" }} /> <span>Sangat Tinggi (Jawa)</span>
                </div>
                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                 <div style={{ width: 12, height: 12, background: "#1A3A5C", opacity: 0.2 }} /> <span>Tahap Awal</span>
+                 <div style={{ width: 12, height: 12, background: "#1A3A5C", opacity: 0.3 }} /> <span>Tahap Awal</span>
                </div>
              </div>
           </div>
+          <style>{`
+            .island-path { transition: all 0.3s ease; cursor: pointer; }
+            .island-path:hover { transform: scale(1.02); fill-opacity: 1; filter: drop-shadow(0 4px 8px rgba(212,160,23,0.3)); }
+          `}</style>
         </div>
 
         {/* Provinsi breakdown */}

@@ -10,7 +10,8 @@ import {
 } from "recharts";
 import toast from "react-hot-toast";
 import Link from "next/link";
-import { Printer, Share2, SlidersHorizontal, ChevronDown, ChevronUp, ArrowLeft, Award } from "lucide-react";
+import { Printer, Share2, SlidersHorizontal, ChevronDown, ChevronUp, ArrowLeft, Award, Globe } from "lucide-react";
+import confetti from "canvas-confetti";
 
 const DIMENSION_LABELS: Record<string, string> = {
   legalitas: "Legalitas", kualitas: "Kualitas", kemasan: "Kemasan", kapasitas: "Kapasitas", pasar: "Pasar",
@@ -125,6 +126,7 @@ function DashboardContent() {
   const [showFinancing, setShowFinancing] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [showSimulator, setShowSimulator] = useState(false);
+  const [showCertificate, setShowCertificate] = useState(false);
   const [chartsReady, setChartsReady] = useState(false);
   const [baseScores, setBaseScores] = useState<Record<string, number>>({});
   const printRef = useRef<HTMLDivElement>(null);
@@ -153,6 +155,23 @@ function DashboardContent() {
 
     const ers = calculateERS({ namaUsaha: na, namaProduk: np, targetNegara: tn, ...scores });
     setResult(ers);
+    
+    if (ers.ersTotal >= 80) {
+      const duration = 3 * 1000;
+      const animationEnd = Date.now() + duration;
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+      const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
+
+      const interval: any = setInterval(function() {
+        const timeLeft = animationEnd - Date.now();
+        if (timeLeft <= 0) return clearInterval(interval);
+        const particleCount = 50 * (timeLeft / duration);
+        confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
+        confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
+      }, 250);
+    }
+
     // Delay charts to show skeleton first
     setTimeout(() => setChartsReady(true), 600);
   }, [params]);
@@ -220,8 +239,8 @@ function DashboardContent() {
           <button onClick={handlePrint} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 16px", borderRadius: 10, border: "none", background: "rgba(26,58,92,0.09)", color: "#1A3A5C", fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>
             <Printer size={14} /> Export PDF
           </button>
-          <button onClick={() => toast.success("Sertifikat ERS sedang disiapkan...")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 16px", borderRadius: 10, border: "none", background: "linear-gradient(135deg, #2E7D52, #3FA86E)", color: "white", fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 13, cursor: "pointer", boxShadow: "0 4px 12px rgba(46,125,82,0.2)" }}>
-            <Award size={14} /> Download Sertifikat
+          <button onClick={() => setShowCertificate(true)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 16px", borderRadius: 10, border: "none", background: "linear-gradient(135deg, #2E7D52, #3FA86E)", color: "white", fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 13, cursor: "pointer", boxShadow: "0 4px 12px rgba(46,125,82,0.2)" }}>
+            <Award size={14} /> Lihat Sertifikat
           </button>
           <button onClick={handleShareWA} className="share-btn share-wa">
             <Share2 size={14} /> Bagikan ke WhatsApp
@@ -394,6 +413,70 @@ function DashboardContent() {
           </Link>
         </div>
       </div>
+
+      {/* Certificate Modal */}
+      {showCertificate && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(13,33,55,0.92)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }} onClick={() => setShowCertificate(false)}>
+          <div style={{
+            background: "white", width: "100%", maxWidth: 840,
+            borderRadius: 0, padding: 0, position: "relative",
+            boxShadow: "0 32px 80px rgba(0,0,0,0.5)",
+            overflow: "hidden"
+          }} onClick={e => e.stopPropagation()}>
+            <div style={{ padding: 40, border: "15px solid #1A3A5C", position: "relative" }} className="pattern-batik">
+              {/* Certificate Inner Border */}
+              <div style={{ border: "2px solid #D4A017", padding: "40px", textAlign: "center", background: "rgba(255,255,255,0.95)" }}>
+                <div style={{ fontSize: 14, fontWeight: 700, color: "#1A3A5C", letterSpacing: "0.2em", marginBottom: 20 }}>DIGDAYA EXPORT ADVISOR</div>
+                <h2 style={{ fontFamily: "var(--font-display)", fontSize: 32, fontWeight: 800, color: "#1A3A5C", marginBottom: 4 }}>SERTIFIKAT KESIAPAN EKSPOR</h2>
+                <div style={{ width: 60, height: 2, background: "#D4A017", margin: "16px auto 24px" }} />
+                
+                <p style={{ fontSize: 15, color: "#5A6878", marginBottom: 8 }}>Sertifikat ini diberikan kepada:</p>
+                <div style={{ fontFamily: "var(--font-display)", fontSize: 36, fontWeight: 800, color: "#D4A017", marginBottom: 8 }}>{namaUsaha}</div>
+                <p style={{ fontSize: 15, color: "#5A6878", marginBottom: 32 }}>atas keberhasilan mencapai standar kelayakan ekspor untuk produk:</p>
+                <div style={{ fontSize: 20, fontWeight: 700, color: "#1A3A5C", marginBottom: 40 }}>{namaProduk}</div>
+
+                <div style={{ display: "flex", justifyContent: "center", gap: 60, marginBottom: 40 }}>
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: 12, color: "#8899AA", marginBottom: 4 }}>Negara Tujuan</div>
+                    <div style={{ fontSize: 18, fontWeight: 700, color: "#1A3A5C" }}>{market?.negara}</div>
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: 12, color: "#8899AA", marginBottom: 4 }}>ERS Score</div>
+                    <div style={{ fontSize: 28, fontWeight: 800, color: result.tierColor }}>{result.ersTotal}</div>
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: 12, color: "#8899AA", marginBottom: 4 }}>Tier Level</div>
+                    <div style={{ fontSize: 18, fontWeight: 700, color: result.tierColor }}>{result.tier}</div>
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: 40 }}>
+                  <div style={{ textAlign: "left" }}>
+                    <div style={{ fontSize: 11, color: "#8899AA" }}>ID Sertifikat:</div>
+                    <div style={{ fontSize: 11, color: "#1A3A5C", fontWeight: 600 }}>DGDY-{Math.random().toString(36).substring(7).toUpperCase()}-2026</div>
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{ width: 100, height: 100, background: "rgba(26,58,92,0.05)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", border: "1px dashed rgba(26,58,92,0.2)", marginBottom: 10 }}>
+                      <Globe size={40} color="rgba(26,58,92,0.2)" />
+                    </div>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: "#1A3A5C" }}>Digital Verification Center</div>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, color: "#D4A017", fontSize: 24, marginBottom: 8 }}>DIGDAYA</div>
+                    <div style={{ fontSize: 11, color: "#8899AA" }}>Diterbitkan pada:</div>
+                    <div style={{ fontSize: 11, color: "#1A3A5C", fontWeight: 600 }}>{new Date().toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div style={{ background: "#F8FAFC", padding: "16px 24px", display: "flex", justifyContent: "flex-end", gap: 12 }}>
+               <button onClick={handlePrint} style={{ padding: "10px 20px", borderRadius: 8, border: "none", background: "#1A3A5C", color: "white", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>Unduh Sebagai PDF</button>
+               <button onClick={() => setShowCertificate(false)} style={{ padding: "10px 20px", borderRadius: 8, border: "1px solid rgba(26,58,92,0.2)", background: "white", color: "#64748B", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>Tutup</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Financing Modal */}
       {showFinancing && (
