@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, TrendingUp, Shield, Zap, Globe, Users, Award, ChevronDown } from "lucide-react";
+import { motion } from "framer-motion";
 
 function AnimatedCounter({ target, suffix = "", prefix = "" }: { target: number; suffix?: string; prefix?: string }) {
   const [count, setCount] = useState(0);
@@ -86,41 +87,65 @@ export default function LandingPage() {
         position: "relative", overflow: "hidden", paddingTop: 80,
       }} className="pattern-batik-dark">
         {/* Floating orbs */}
-        <div style={{ position: "absolute", top: "15%", left: "8%", width: 300, height: 300, borderRadius: "50%", background: "radial-gradient(circle, rgba(212,160,23,0.12) 0%, transparent 70%)", filter: "blur(40px)", pointerEvents: "none" }} />
-        <div style={{ position: "absolute", bottom: "20%", right: "5%", width: 400, height: 400, borderRadius: "50%", background: "radial-gradient(circle, rgba(46,125,82,0.1) 0%, transparent 70%)", filter: "blur(60px)", pointerEvents: "none" }} />
+        <motion.div 
+          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+          transition={{ duration: 8, repeat: Infinity }}
+          style={{ position: "absolute", top: "15%", left: "8%", width: 300, height: 300, borderRadius: "50%", background: "radial-gradient(circle, rgba(212,160,23,0.12) 0%, transparent 70%)", filter: "blur(40px)", pointerEvents: "none" }} 
+        />
+        <motion.div 
+          animate={{ scale: [1.2, 1, 1.2], opacity: [0.1, 0.3, 0.1] }}
+          transition={{ duration: 10, repeat: Infinity }}
+          style={{ position: "absolute", bottom: "20%", right: "5%", width: 400, height: 400, borderRadius: "50%", background: "radial-gradient(circle, rgba(46,125,82,0.1) 0%, transparent 70%)", filter: "blur(60px)", pointerEvents: "none" }} 
+        />
 
         <div style={{ maxWidth: 860, textAlign: "center", padding: "0 24px", position: "relative", zIndex: 2 }}>
           {/* Badge */}
-          <div style={{
-            display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 28,
-            background: "rgba(212,160,23,0.12)", border: "1px solid rgba(212,160,23,0.35)",
-            borderRadius: 100, padding: "7px 18px",
-          }}>
+          <motion.div 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 28,
+              background: "rgba(212,160,23,0.12)", border: "1px solid rgba(212,160,23,0.35)",
+              borderRadius: 100, padding: "7px 18px",
+            }}>
             <span style={{ fontSize: 16 }}>🏆</span>
             <span style={{ fontFamily: "var(--font-body)", fontSize: 13, fontWeight: 600, color: "#D4A017", letterSpacing: "0.04em" }}>
               PIDI · DIGDAYA HACKATHON 2026
             </span>
-          </div>
+          </motion.div>
 
           {/* Headline */}
-          <h1 style={{
-            fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(36px, 6vw, 68px)",
-            color: "#F5F0E8", lineHeight: 1.1, letterSpacing: "-0.02em", marginBottom: 24,
-          }}>
+          <motion.h1 
+            initial={{ y: 30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            style={{
+              fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(36px, 6vw, 68px)",
+              color: "#F5F0E8", lineHeight: 1.1, letterSpacing: "-0.02em", marginBottom: 24,
+            }}>
             Penasihat Ekspor AI
             <br />
             <span style={{ background: "linear-gradient(135deg, #D4A017, #F0C040)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
               untuk UMKM Indonesia
             </span>
-          </h1>
+          </motion.h1>
 
-          <p style={{ fontSize: "clamp(16px, 2vw, 19px)", color: "rgba(245,240,232,0.72)", lineHeight: 1.7, marginBottom: 40, maxWidth: 640, margin: "0 auto 40px" }}>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4, duration: 1 }}
+            style={{ fontSize: "clamp(16px, 2vw, 19px)", color: "rgba(245,240,232,0.72)", lineHeight: 1.7, marginBottom: 40, maxWidth: 640, margin: "0 auto 40px" }}>
             Validasi kesiapan ekspor produk Anda ke 8 pasar global dalam hitungan menit. 
             AI kami menganalisis kemasan, dokumen, dan kapasitas produksi — hasilnya menjadi bukti layak kredit di OJK.
-          </p>
+          </motion.p>
 
           {/* CTA Buttons */}
-          <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap", marginBottom: 56 }}>
+          <motion.div 
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.6, type: "spring", stiffness: 100 }}
+            style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap", marginBottom: 56 }}>
             <Link href="/assessment" style={{
               display: "inline-flex", alignItems: "center", gap: 8,
               fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 17,
@@ -142,22 +167,29 @@ export default function LandingPage() {
             }}>
               ▶ Lihat Video Panduan
             </Link>
-          </div>
+          </motion.div>
 
           {/* Mini trust row */}
-          <div style={{ display: "flex", gap: 24, justifyContent: "center", flexWrap: "wrap" }}>
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
+            style={{ display: "flex", gap: 24, justifyContent: "center", flexWrap: "wrap" }}>
             {["🏦 Terintegrasi OJK/SLIK", "🛡️ Data Aman & Terenkripsi", "🌐 8 Pasar Global", "⚡ Hasil dalam 3 Menit"].map(t => (
               <div key={t} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "rgba(245,240,232,0.6)", fontFamily: "var(--font-body)" }}>
                 {t}
               </div>
             ))}
-          </div>
+          </motion.div>
         </div>
 
         {/* Scroll arrow */}
-        <div style={{ position: "absolute", bottom: 32, animation: "float 2s ease-in-out infinite" }}>
+        <motion.div 
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          style={{ position: "absolute", bottom: 32 }}>
           <ChevronDown size={28} color="rgba(212,160,23,0.6)" />
-        </div>
+        </motion.div>
       </section>
 
       {/* STATS SECTION */}
