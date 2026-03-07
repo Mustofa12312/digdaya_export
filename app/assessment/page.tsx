@@ -390,34 +390,23 @@ export default function AssessmentPage() {
     router.push(`/dashboard?${params.toString()}`);
   };
 
-  const cardStyle: React.CSSProperties = {
-    maxWidth: 680, margin: "0 auto", background: "white",
-    borderRadius: 20, padding: "36px 40px",
-    boxShadow: "0 8px 40px rgba(26,58,92,0.10)",
-    border: "1px solid rgba(212,160,23,0.12)",
-  };
+  const cardClassName = "w-full max-w-[680px] mx-auto bg-white rounded-[16px] md:rounded-[20px] p-6 md:p-[36px_40px] shadow-[0_8px_40px_rgba(26,58,92,0.10)] border border-[rgba(212,160,23,0.12)] page-enter";
 
   const t = TRANSLATIONS[form.bahasaDaerah] || TRANSLATIONS.id;
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--krem-linen)", padding: "100px 24px 60px" }} className="pattern-batik page-enter">
-      <div style={{ maxWidth: 740, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: "#D4A017", letterSpacing: "0.08em", marginBottom: 8 }}>PENILAIAN KESIAPAN EKSPOR</div>
-          <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 32, color: "#1A3A5C", marginBottom: 4 }}>{t.title}</h1>
-          <p style={{ color: "#8899AA", fontSize: 15 }}>{t.subtitle}</p>
+    <div className="min-h-screen bg-[var(--krem-linen)] px-4 md:px-6 pt-20 md:pt-[100px] pb-12 md:pb-[60px] pattern-batik page-enter">
+      <div className="w-full max-w-[740px] mx-auto">
+        <div className="text-center mb-8">
+          <div className="text-[12px] md:text-[13px] font-semibold text-[#D4A017] tracking-[0.08em] mb-2">PENILAIAN KESIAPAN EKSPOR</div>
+          <h1 className="font-display font-extrabold text-[26px] md:text-[32px] text-[#1A3A5C] mb-1 leading-tight">{t.title}</h1>
+          <p className="text-[#8899AA] text-[14px] md:text-[15px]">{t.subtitle}</p>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
+        <div className="flex justify-center mb-6">
           <button
             onClick={toggleAssistant}
-            style={{
-              display: "flex", alignItems: "center", gap: 8, padding: "8px 20px",
-              borderRadius: 100, border: assistantActive ? "2px solid #D4A017" : "1.5px solid rgba(26,58,92,0.15)",
-              background: assistantActive ? "rgba(212,160,23,0.1)" : "white",
-              color: "#1A3A5C", fontWeight: 600, fontSize: 13, cursor: "pointer",
-              transition: "all 0.3s",
-            }}
+            className={`flex items-center gap-2 px-5 py-2 rounded-full font-semibold text-[13px] transition-all duration-300 border-[1.5px] ${assistantActive ? "border-[#D4A017] bg-[rgba(212,160,23,0.1)] text-[#1A3A5C]" : "border-[rgba(26,58,92,0.15)] bg-white text-[#1A3A5C]"}`}
           >
             {assistantActive ? <Volume2 size={16} color="#D4A017" /> : <VolumeX size={16} color="#8899AA" />}
             {assistantActive ? t.assistant_on : t.assistant_off}
@@ -425,22 +414,22 @@ export default function AssessmentPage() {
         </div>
 
         <JourneyTracker currentStep={step} />
-        <div style={{ height: 28 }} />
+        <div className="h-6 md:h-7" />
 
         {/* STEP 1 */}
         {step === 1 && (
-          <div style={cardStyle} className="page-enter">
+          <div className={cardClassName}>
             <DemoBanner onFill={fillDemoProfile} />
             <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 22, color: "#1A3A5C", marginBottom: 24 }}>🏪 {t.profile}</h2>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
-              <div style={{ gridColumn: "1 / -1" }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-[18px]">
+              <div className="md:col-span-2">
                 <VoiceInput id="namaUsaha" label="Nama Usaha / Brand" value={form.namaUsaha} onChange={v => update("namaUsaha", v)} placeholder="Contoh: Kopi Gayo Bu Aminah" />
               </div>
               <VoiceInput id="pemilikNama" label="Nama Pemilik" value={form.pemilikNama} onChange={v => update("pemilikNama", v)} placeholder="Nama lengkap" />
               <VoiceInput id="noTelepon" label="No. WhatsApp" value={form.noTelepon} onChange={v => update("noTelepon", v)} placeholder="08xx-xxxx-xxxx" />
               <Select label="Provinsi" value={form.provinsi} onChange={v => update("provinsi", v)} options={PROVINSI_LIST.map(p => ({ value: p, label: p }))} />
               <VoiceInput id="kabupaten" label="Kabupaten / Kota" value={form.kabupaten} onChange={v => update("kabupaten", v)} placeholder="Contoh: Aceh Tengah" />
-              <div style={{ gridColumn: "1 / -1" }}>
+              <div className="md:col-span-2">
                 <Select label="Bahasa Daerah Pilihan UI" value={form.bahasaDaerah} onChange={v => update("bahasaDaerah", v)} options={BAHASA_DAERAH.map(b => ({ value: b.kode, label: b.label }))} />
               </div>
             </div>
@@ -449,14 +438,14 @@ export default function AssessmentPage() {
 
         {/* STEP 2 */}
         {step === 2 && (
-          <div style={cardStyle} className="page-enter">
+          <div className={cardClassName}>
             <DemoBanner onFill={fillDemoProduk} />
             <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 22, color: "#1A3A5C", marginBottom: 24 }}>📦 {t.product}</h2>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
-              <div style={{ gridColumn: "1 / -1" }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-[18px]">
+              <div className="md:col-span-2">
                 <VoiceInput id="namaProduk" label="Nama Produk" value={form.namaProduk} onChange={v => update("namaProduk", v)} placeholder="Contoh: Keripik Tempe Rempah Original" />
               </div>
-              <div style={{ gridColumn: "1 / -1" }}>
+              <div className="md:col-span-2">
                 <Select label="Kategori Produk (Kode HS)" value={form.kategoriHS} onChange={v => update("kategoriHS", v)} options={KATEGORI_PRODUK.map(k => ({ value: k.kode, label: `${k.kode} — ${k.label}` }))} />
               </div>
               <VoiceInput id="kapasitas" label="Kapasitas / Bulan" value={form.kapasitasBulanan} onChange={v => update("kapasitasBulanan", v)} placeholder="Contoh: 500" />
@@ -467,7 +456,7 @@ export default function AssessmentPage() {
 
         {/* STEP 3 */}
         {step === 3 && (
-          <div style={cardStyle} className="page-enter">
+          <div className={cardClassName}>
             <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 22, color: "#1A3A5C", marginBottom: 8 }}>🖼️ {t.packaging}</h2>
             <p style={{ fontSize: 14, color: "#8899AA", marginBottom: 20 }}>Upload foto kemasan depan dan belakang, atau gunakan Demo Mode untuk simulasi instan.</p>
 
@@ -553,7 +542,7 @@ export default function AssessmentPage() {
 
         {/* STEP 4 */}
         {step === 4 && (
-          <div style={cardStyle} className="page-enter">
+          <div className={cardClassName}>
             <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 22, color: "#1A3A5C", marginBottom: 8 }}>📋 {t.legality}</h2>
             <p style={{ fontSize: 14, color: "#8899AA", marginBottom: 20 }}>Upload dokumen perizinan atau gunakan Demo Mode untuk verifikasi instan.</p>
 
@@ -611,7 +600,7 @@ export default function AssessmentPage() {
 
         {/* STEP 5 */}
         {step === 5 && (
-          <div style={cardStyle} className="page-enter">
+          <div className={cardClassName}>
             <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 22, color: "#1A3A5C", marginBottom: 8 }}>🌏 {t.market}</h2>
             <p style={{ fontSize: 14, color: "#8899AA", marginBottom: 24 }}>ERS Anda akan disesuaikan dengan regulasi negara yang dipilih.</p>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(145px, 1fr))", gap: 12 }}>
@@ -646,25 +635,14 @@ export default function AssessmentPage() {
         )}
 
         {/* Navigation */}
-        <div style={{ display: "flex", justifyContent: "space-between", marginTop: 24, maxWidth: 680, margin: "24px auto 0" }}>
+        <div className="flex justify-between items-center mt-6 md:mt-8 w-full max-w-[680px] mx-auto gap-3">
           {step > 1 ? (
-            <button onClick={() => setStep(s => s - 1)} style={{ padding: "12px 28px", borderRadius: 12, border: "1.5px solid rgba(26,58,92,0.2)", background: "white", color: "#1A3A5C", fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 15, cursor: "pointer" }}>← {t.back}</button>
+            <button onClick={() => setStep(s => s - 1)} className="px-4 md:px-7 py-3 rounded-xl border-[1.5px] border-[rgba(26,58,92,0.2)] bg-white text-[#1A3A5C] font-display font-semibold text-[14px] md:text-[15px] cursor-pointer">← {t.back}</button>
           ) : <div />}
           {step < 5 ? (
-            <button onClick={() => { if (canNext[step]) setStep(s => s + 1); else toast.error("Lengkapi semua data sebelum melanjutkan"); }} style={{
-              padding: "12px 36px", borderRadius: 12, border: "none",
-              background: canNext[step] ? "linear-gradient(135deg, #D4A017, #F0C040)" : "rgba(26,58,92,0.1)",
-              color: canNext[step] ? "#1A3A5C" : "#8899AA",
-              fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 15, cursor: "pointer",
-              boxShadow: canNext[step] ? "0 4px 16px rgba(212,160,23,0.3)" : "none",
-            }}>{t.next} →</button>
+            <button onClick={() => { if (canNext[step]) setStep(s => s + 1); else toast.error("Lengkapi semua data sebelum melanjutkan"); }} className={`px-6 md:px-9 py-3 rounded-xl border-none font-display font-bold text-[14px] md:text-[15px] cursor-pointer transition-all ${canNext[step] ? "bg-gradient-to-br from-[#D4A017] to-[#F0C040] text-[#1A3A5C] shadow-[0_4px_16px_rgba(212,160,23,0.3)]" : "bg-[rgba(26,58,92,0.1)] text-[#8899AA]"}`}>{t.next} →</button>
           ) : (
-            <button onClick={handleSubmit} style={{
-              padding: "13px 40px", borderRadius: 12, border: "none",
-              background: "linear-gradient(135deg, #2E7D52, #3FA86E)", color: "white",
-              fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 16, cursor: "pointer",
-              boxShadow: "0 4px 20px rgba(46,125,82,0.35)",
-            }}>🚀 {t.finish}</button>
+            <button onClick={handleSubmit} className="px-6 md:px-10 py-3 rounded-xl border-none bg-gradient-to-br from-[#2E7D52] to-[#3FA86E] text-white font-display font-bold text-[15px] md:text-[16px] cursor-pointer shadow-[0_4px_20px_rgba(46,125,82,0.35)]">🚀 {t.finish}</button>
           )}
         </div>
       </div>
