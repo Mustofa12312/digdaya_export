@@ -140,27 +140,20 @@ function VoiceInput({ id, label, value, onChange, placeholder = "" }: {
   const isRec = recording === id;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-      <label style={{ fontSize: 13, fontWeight: 600, color: "#1A3A5C", fontFamily: "var(--font-display)" }}>{label}</label>
-      <div style={{ display: "flex", gap: 8, alignItems: "stretch" }}>
+    <div className="flex flex-col gap-2">
+      <label className="text-[13px] font-semibold text-[#1A3A5C] font-display">{label}</label>
+      <div className={`relative flex items-center bg-white border-[1.5px] rounded-[10px] overflow-hidden transition-colors ${isRec ? "border-[#D4A017] ring-1 ring-[#D4A017]/20" : "border-[#EAECEF] focus-within:border-[#D4A017] focus-within:ring-1 focus-within:ring-[#D4A017]/20"}`}>
         <input
           type="text" value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
-          style={{
-            flex: 1, padding: "11px 14px", borderRadius: 10, fontSize: 14,
-            border: "1.5px solid rgba(26,58,92,0.18)", fontFamily: "var(--font-body)",
-            background: "white", color: "#1A3A5C", outline: "none", transition: "border-color 0.2s",
-            minWidth: 0,
-          }}
-          onFocus={e => e.target.style.borderColor = "#D4A017"}
-          onBlur={e => e.target.style.borderColor = "rgba(26,58,92,0.18)"}
+          className="w-full bg-transparent px-4 py-3 text-[14px] text-[#1A3A5C] placeholder-[#8899AA] outline-none"
         />
         <button
           type="button"
           onClick={() => isRec ? stop() : start(id, onChange)}
-          className={`voice-btn${isRec ? " recording" : ""}`}
+          className={`shrink-0 flex items-center justify-center w-10 h-10 mr-1 rounded-md transition-colors ${isRec ? "bg-red-50" : "hover:bg-[#F8F9FA]"}`}
           title={isRec ? "Berhenti merekam" : "Input suara"}
         >
-          {isRec ? <MicOff size={16} color="#B5341A" /> : <Mic size={16} color="#1A3A5C" />}
+          {isRec ? <MicOff size={16} color="#B5341A" className="animate-pulse" /> : <Mic size={16} color="#8899AA" className="hover:text-[#1A3A5C]" />}
         </button>
       </div>
     </div>
@@ -169,35 +162,37 @@ function VoiceInput({ id, label, value, onChange, placeholder = "" }: {
 
 function Select({ label, value, onChange, options }: { label: string; value: string; onChange: (v: string) => void; options: { value: string; label: string }[] }) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-      <label style={{ fontSize: 13, fontWeight: 600, color: "#1A3A5C", fontFamily: "var(--font-display)" }}>{label}</label>
-      <select value={value} onChange={e => onChange(e.target.value)} style={{
-        width: "100%", padding: "11px 14px", borderRadius: 10, fontSize: 14,
-        border: "1.5px solid rgba(26,58,92,0.18)", fontFamily: "var(--font-body)",
-        background: "white", color: "#1A3A5C", outline: "none", appearance: "none", cursor: "pointer",
-        minWidth: 0, textOverflow: "ellipsis",
-      }}>
-        <option value="">— Pilih —</option>
-        {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-      </select>
+    <div className="flex flex-col gap-2">
+      <label className="text-[13px] font-semibold text-[#1A3A5C] font-display">{label}</label>
+      <div className="relative">
+        <select
+          value={value} onChange={e => onChange(e.target.value)}
+          className="w-full appearance-none bg-white px-4 py-3 pr-10 border-[1.5px] border-[#EAECEF] rounded-[10px] text-[14px] text-[#1A3A5C] outline-none transition-colors focus:border-[#D4A017] focus:ring-1 focus:ring-[#D4A017]/20 cursor-pointer"
+        >
+          <option value="">— Pilih —</option>
+          {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+        </select>
+        <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-[#8899AA]">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+        </div>
+      </div>
     </div>
   );
 }
 
 function DemoBanner({ onFill }: { onFill: () => void }) {
   return (
-    <div className="demo-banner no-print" style={{ marginBottom: 20 }}>
-      <FlaskConical size={20} color="#D4A017" />
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 14, color: "#1A3A5C" }}>Mode Demo Tersedia</div>
-        <div style={{ fontSize: 12, color: "#8899AA", marginTop: 2 }}>Isi otomatis dengan data contoh UMKM kopi untuk presentasi cepat</div>
+    <div className="flex items-center gap-4 bg-[#FFF8E7] border border-[#F0D080]/60 rounded-[14px] p-4 mb-6 shadow-sm">
+      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#F0C040]/30 text-[#D4A017] shrink-0">
+        <FlaskConical size={20} />
       </div>
-      <button onClick={onFill} style={{
-        padding: "8px 16px", borderRadius: 9, border: "none",
-        background: "linear-gradient(135deg, #D4A017, #F0C040)", color: "#1A3A5C",
-        fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 13, cursor: "pointer",
-        whiteSpace: "nowrap",
-      }}>⚡ Isi Demo Data</button>
+      <div className="flex-1 min-w-0">
+        <div className="font-display font-bold text-[14px] text-[#1A3A5C]">Mode Demo Tersedia</div>
+        <div className="text-[12px] text-[#8899AA] mt-0.5 truncate">Isi otomatis dengan data contoh UMKM kopi untuk presentasi cepat</div>
+      </div>
+      <button onClick={onFill} className="shrink-0 px-4 py-2.5 bg-gradient-to-br from-[#D4A017] to-[#F0C040] hover:opacity-90 text-[#1A3A5C] shadow hover:shadow-md active:scale-[0.98] transition-all rounded-xl font-display font-bold text-[13px]">
+        ⚡ Isi Demo Data
+      </button>
     </div>
   );
 }
@@ -467,16 +462,17 @@ export default function AssessmentPage() {
 
             {/* Demo shortcut */}
             {form.kemasanScore === null && (
-              <div className="demo-banner" style={{ marginBottom: 20 }}>
-                <FlaskConical size={18} color="#D4A017" />
-                <div style={{ flex: 1, fontSize: 13, color: "#5A6878" }}>
-                  <strong style={{ color: "#1A3A5C" }}>Demo Mode:</strong> Tidak perlu upload file asli untuk presentasi
+              <div className="flex items-center gap-4 bg-[#FFF8E7] border border-[#F0D080]/60 rounded-[14px] p-4 mb-6 shadow-sm">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#F0C040]/30 text-[#D4A017] shrink-0">
+                  <FlaskConical size={20} />
                 </div>
-                <button onClick={skipWithMockScoreKemasan} style={{
-                  padding: "7px 14px", borderRadius: 8, border: "none",
-                  background: "linear-gradient(135deg, #D4A017, #F0C040)", color: "#1A3A5C",
-                  fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 12, cursor: "pointer", whiteSpace: "nowrap",
-                }}>⚡ Simulasi Analisis</button>
+                <div className="flex-1 min-w-0">
+                  <div className="font-display font-bold text-[14px] text-[#1A3A5C]">Mode Demo: Simulasi Analisis Kemasan</div>
+                  <div className="text-[12px] text-[#8899AA] mt-0.5 truncate">Tidak perlu upload ulang file asli untuk presentasi</div>
+                </div>
+                <button onClick={skipWithMockScoreKemasan} className="shrink-0 px-4 py-2.5 bg-gradient-to-br from-[#D4A017] to-[#F0C040] hover:opacity-90 text-[#1A3A5C] shadow hover:shadow-md active:scale-[0.98] transition-all rounded-xl font-display font-bold text-[13px]">
+                  ⚡ Simulasi
+                </button>
               </div>
             )}
 
@@ -552,16 +548,17 @@ export default function AssessmentPage() {
             <p style={{ fontSize: 14, color: "#8899AA", marginBottom: 20 }}>Upload dokumen perizinan atau gunakan Demo Mode untuk verifikasi instan.</p>
 
             {form.dokumenScore === null && (
-              <div className="demo-banner" style={{ marginBottom: 20 }}>
-                <FlaskConical size={18} color="#D4A017" />
-                <div style={{ flex: 1, fontSize: 13, color: "#5A6878" }}>
-                  <strong style={{ color: "#1A3A5C" }}>Demo Mode:</strong> Simulasikan verifikasi OCR + API BPOM/DJKI
+              <div className="flex items-center gap-4 bg-[#FFF8E7] border border-[#F0D080]/60 rounded-[14px] p-4 mb-6 shadow-sm">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#F0C040]/30 text-[#D4A017] shrink-0">
+                  <FlaskConical size={20} />
                 </div>
-                <button onClick={skipWithMockScoreDokumen} style={{
-                  padding: "7px 14px", borderRadius: 8, border: "none",
-                  background: "linear-gradient(135deg, #D4A017, #F0C040)", color: "#1A3A5C",
-                  fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 12, cursor: "pointer", whiteSpace: "nowrap",
-                }}>⚡ Simulasi Verifikasi</button>
+                <div className="flex-1 min-w-0">
+                  <div className="font-display font-bold text-[14px] text-[#1A3A5C]">Mode Demo: Simulasi OCR Dokumen</div>
+                  <div className="text-[12px] text-[#8899AA] mt-0.5 truncate">Lewati proses upload untuk presentasi OCR + BPOM</div>
+                </div>
+                <button onClick={skipWithMockScoreDokumen} className="shrink-0 px-4 py-2.5 bg-gradient-to-br from-[#D4A017] to-[#F0C040] hover:opacity-90 text-[#1A3A5C] shadow hover:shadow-md active:scale-[0.98] transition-all rounded-xl font-display font-bold text-[13px]">
+                  ⚡ Simulasi
+                </button>
               </div>
             )}
 
