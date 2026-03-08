@@ -50,6 +50,11 @@ export default function Navbar() {
             onMouseLeave={e => { (e.target as HTMLElement).style.color = "rgba(245,240,232,0.8)"; (e.target as HTMLElement).style.background = "transparent"; }}
             >{l.label}</Link>
           ))}
+          <Link href="/login" style={{
+            fontFamily: "var(--font-body)", fontSize: 14, fontWeight: 600,
+            color: "#D4A017", textDecoration: "none",
+            padding: "8px 16px", borderRadius: 8, transition: "all 0.2s"
+          }}>Masuk</Link>
           <Link href="/assessment" style={{
             fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 14,
             background: "linear-gradient(135deg, #D4A017, #F0C040)",
@@ -77,6 +82,11 @@ export default function Navbar() {
               borderBottom: "1px solid rgba(255,255,255,0.06)",
             }}>{l.label}</Link>
           ))}
+          <Link href="/login" onClick={() => setOpen(false)} style={{
+            display: "block", fontFamily: "var(--font-body)", fontSize: 16,
+            color: "#D4A017", textDecoration: "none", padding: "12px 0", fontWeight: 600,
+            borderBottom: "1px solid rgba(255,255,255,0.06)",
+          }}>Masuk ke Akun</Link>
           <Link href="/assessment" onClick={() => setOpen(false)} style={{
             display: "block", textAlign: "center", marginTop: 16,
             fontFamily: "var(--font-display)", fontWeight: 700,

@@ -3,6 +3,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { calculateERS, ERSResult } from "@/lib/ers-engine";
 import { getMarketByCode } from "@/lib/market-data";
+import { useAssessmentStore } from "@/lib/store";
 import ERSGauge from "@/components/ERSGauge";
 import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, ResponsiveContainer,
@@ -131,13 +132,41 @@ function DashboardContent() {
   const [baseScores, setBaseScores] = useState<Record<string, number>>({});
   const printRef = useRef<HTMLDivElement>(null);
 
+  const storeForm = useAssessmentStore((state) => state.form);
+
   useEffect(() => {
-    // Try URL params first, then localStorage fallback
-    let searchString = params.toString();
-    if (!params.get("namaUsaha") && typeof window !== "undefined") {
-      const saved = localStorage.getItem("digdaya_last_assessment");
-      if (saved) { searchString = saved; }
-    }
+    // Try Zustand store first
+    if (storeForm.namaUsaha) {
+      setNamaUsaha(storeForm.namaUsaha);
+      setNamaProduk(storeForm.namaProduk);
+      setTargetNegara(storeForm.targetNegara);
+      const scores = {
+        legalitasScore: storeForm.dokumenScore || 70,
+        kualitasScore: 72,
+        kemasanScore: storeForm.kemasanScore || 65,
+        kapasitasScore: Math.min(100, Math.max(35, (parseInt(storeForm.kapasitasBulanan || "0") / 5) + 30)),
+        pasarScore: getMarketByCode(storeForm.targetNegara)?.peluangScore || 70,
+      };
+      setBaseScores({
+        legalitas: scores.legalitasScore, kualitas: scores.kualitasScore,
+        kemasan: scores.kemasanScore, kapasitas: scores.kapasitasScore,
+        pasar: scores.pasarScore
+      });
+
+      const ers = calculateERS({
+        namaUsaha: storeForm.namaUsaha,
+        namaProduk: storeForm.namaProduk,
+        targetNegara: storeForm.targetNegara,
+        ...scores
+      });
+      setResult(ers);
+    } else {
+      // Fallback to URL params / localStorage
+      let searchString = params.toString();
+      if (!params.get("namaUsaha") && typeof window !== "undefined") {
+        const saved = localStorage.getItem("digdaya_last_assessment");
+        if (saved) { searchString = saved; }
+      }
 
     const sp = new URLSearchParams(searchString);
     const na = sp.get("namaUsaha") || "UMKM Saya";
@@ -172,9 +201,11 @@ function DashboardContent() {
       }, 250);
     }
 
+    } // End of else block
+    
     // Delay charts to show skeleton first
     setTimeout(() => setChartsReady(true), 600);
-  }, [params]);
+  }, [params, storeForm]);
 
   const animatedScore = useAnimatedValue(result?.ersTotal ?? 0, 1400);
 

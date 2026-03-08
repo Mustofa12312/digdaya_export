@@ -5,9 +5,11 @@ import JourneyTracker from "@/components/JourneyTracker";
 import FileUploadZone from "@/components/FileUploadZone";
 import { PROVINSI_LIST, KATEGORI_PRODUK, BAHASA_DAERAH } from "@/lib/indonesia-regions";
 import { getMarketOpportunities } from "@/lib/market-data";
-import { mockAnalyzePackaging, mockValidateDocument, type PackagingAnalysisResult } from "@/lib/ers-engine";
-import { analyzePackagingWithAI } from "@/lib/gemini";
+import { analyzePackagingWithAIAction } from "@/app/actions/gemini";
 import { supabase } from "@/lib/supabase";
+import { useAssessmentStore } from "@/lib/store";
+import { mockAnalyzePackaging } from "@/lib/ers-engine";
+import { validateDocumentAction } from "@/app/actions/document";
 import toast from "react-hot-toast";
 import { Loader2, Mic, MicOff, FlaskConical, Volume2, VolumeX, CheckCircle, AlertTriangle, XCircle } from "lucide-react";
 
@@ -76,24 +78,7 @@ const TRANSLATIONS: Record<string, Record<string, string>> = {
   }
 };
 
-interface FormData {
-  namaUsaha: string; pemilikNama: string; noTelepon: string;
-  provinsi: string; kabupaten: string; bahasaDaerah: string;
-  namaProduk: string; kategoriHS: string; kapasitasBulanan: string; satuan: string;
-  kemasanFiles: File[]; kemasanScore: number | null;
-  dokumenJenis: string; dokumenFiles: File[]; dokumenScore: number | null; dokumenPesan: string;
-  targetNegara: string;
-  kemasanInsights: PackagingAnalysisResult["insights"] | null;
-}
-
-const initialForm: FormData = {
-  namaUsaha: "", pemilikNama: "", noTelepon: "", provinsi: "", kabupaten: "", bahasaDaerah: "id",
-  namaProduk: "", kategoriHS: "", kapasitasBulanan: "", satuan: "kg",
-  kemasanFiles: [], kemasanScore: null,
-  dokumenJenis: "PIRT", dokumenFiles: [], dokumenScore: null, dokumenPesan: "",
-  targetNegara: "JP",
-  kemasanInsights: null,
-};
+// Digdaya FormData sudah dihandle di Zustand (lib/store.ts)
 
 function useVoiceAssistant() {
   const [enabled, setEnabled] = useState(false);
@@ -164,6 +149,7 @@ function VoiceInput({ id, label, value, onChange, placeholder = "" }: {
             flex: 1, padding: "11px 14px", borderRadius: 10, fontSize: 14,
             border: "1.5px solid rgba(26,58,92,0.18)", fontFamily: "var(--font-body)",
             background: "white", color: "#1A3A5C", outline: "none", transition: "border-color 0.2s",
+            minWidth: 0,
           }}
           onFocus={e => e.target.style.borderColor = "#D4A017"}
           onBlur={e => e.target.style.borderColor = "rgba(26,58,92,0.18)"}
@@ -189,6 +175,7 @@ function Select({ label, value, onChange, options }: { label: string; value: str
         width: "100%", padding: "11px 14px", borderRadius: 10, fontSize: 14,
         border: "1.5px solid rgba(26,58,92,0.18)", fontFamily: "var(--font-body)",
         background: "white", color: "#1A3A5C", outline: "none", appearance: "none", cursor: "pointer",
+        minWidth: 0, textOverflow: "ellipsis",
       }}>
         <option value="">— Pilih —</option>
         {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
@@ -201,7 +188,7 @@ function DemoBanner({ onFill }: { onFill: () => void }) {
   return (
     <div className="demo-banner no-print" style={{ marginBottom: 20 }}>
       <FlaskConical size={20} color="#D4A017" />
-      <div style={{ flex: 1 }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 14, color: "#1A3A5C" }}>Mode Demo Tersedia</div>
         <div style={{ fontSize: 12, color: "#8899AA", marginTop: 2 }}>Isi otomatis dengan data contoh UMKM kopi untuk presentasi cepat</div>
       </div>
@@ -253,7 +240,12 @@ function ScanningOverlay() {
 export default function AssessmentPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
-  const [form, setForm] = useState<FormData>(initialForm);
+  const storeForm = useAssessmentStore((state) => state.form);
+  const updateStoreForm = useAssessmentStore((state) => state.updateForm);
+  const [kemasanFiles, setKemasanFiles] = useState<File[]>([]);
+  const [dokumenFiles, setDokumenFiles] = useState<File[]>([]);
+  
+  const form = { ...storeForm, kemasanFiles, dokumenFiles };
   const [analyzing, setAnalyzing] = useState(false);
   const [validating, setValidating] = useState(false);
   const [demoSkipped, setDemoSkipped] = useState(false);
@@ -283,15 +275,19 @@ export default function AssessmentPage() {
     }
   };
 
-  const update = (key: keyof FormData, val: unknown) => setForm(f => ({ ...f, [key]: val }));
+  const update = (key: string, val: any) => {
+    if (key === "kemasanFiles") setKemasanFiles(val);
+    else if (key === "dokumenFiles") setDokumenFiles(val);
+    else updateStoreForm({ [key]: val });
+  };
 
   const fillDemoProfile = () => {
-    setForm(f => ({ ...f, ...DEMO_PROFILE }));
+    updateStoreForm(DEMO_PROFILE);
     toast.success("Data profil demo diisi otomatis!");
   };
 
   const fillDemoProduk = () => {
-    setForm(f => ({ ...f, ...DEMO_PRODUK }));
+    updateStoreForm(DEMO_PRODUK);
     toast.success("Data produk demo diisi otomatis!");
   };
 
@@ -322,7 +318,10 @@ export default function AssessmentPage() {
       let result;
       // If user uploaded a file and we have an API key, use REAL AI
       if (form.kemasanFiles.length > 0 && process.env.NEXT_PUBLIC_GOOGLE_GEMINI_API_KEY) {
-        result = await analyzePackagingWithAI(form.kemasanFiles[0], form.targetNegara);
+        const formData = new FormData();
+        formData.append("file", form.kemasanFiles[0]);
+        formData.append("targetCountry", form.targetNegara);
+        result = await analyzePackagingWithAIAction(formData);
       } else {
         // Fallback to mock for demo/no-key
         result = await mockAnalyzePackaging(form.kemasanFiles.length > 0 ? form.kemasanFiles : [new File([], "demo.jpg")], form.targetNegara);
@@ -345,11 +344,17 @@ export default function AssessmentPage() {
 
   const handleValidateDoc = async () => {
     setValidating(true);
-    const result = await mockValidateDocument(form.dokumenJenis);
-    update("dokumenScore", result.skor);
-    update("dokumenPesan", result.pesan);
-    setValidating(false);
-    toast.success("Dokumen terverifikasi!");
+    try {
+      const file = form.dokumenFiles[0] || new File([], "demo.pdf");
+      const result = await validateDocumentAction(form.dokumenJenis, file);
+      update("dokumenScore", result.skor);
+      update("dokumenPesan", result.pesan);
+      toast.success("Dokumen terverifikasi secara aman melalui Server!");
+    } catch (error) {
+      toast.error("Gagal memverifikasi dokumen");
+    } finally {
+      setValidating(false);
+    }
   };
 
   const handleSubmit = async () => {
