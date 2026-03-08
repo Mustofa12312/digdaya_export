@@ -133,27 +133,39 @@ function useVoiceInput() {
 }
 
 // ─── Sub-components ──────────────────────────────────────────────────────────
-function VoiceInput({ id, label, value, onChange, placeholder = "" }: {
-  id: string; label: string; value: string; onChange: (v: string) => void; placeholder?: string;
-}) {
-  const { recording, start, stop } = useVoiceInput();
+function VoiceInput({ id, label, value, onChange, placeholder }: { id: string; label: string; value: string; onChange: (v: string) => void; placeholder: string }) {
+  const { start, stop, recording } = useVoiceInput();
   const isRec = recording === id;
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-[13px] font-semibold text-[#1A3A5C] font-display">{label}</label>
-      <div className={`relative flex items-center bg-white border-[1.5px] rounded-[10px] overflow-hidden transition-colors ${isRec ? "border-[#D4A017] ring-1 ring-[#D4A017]/20" : "border-[#EAECEF] focus-within:border-[#D4A017] focus-within:ring-1 focus-within:ring-[#D4A017]/20"}`}>
+      <label style={{ fontSize: 14, fontWeight: 600, color: "#374151" }}>{label}</label>
+      <div style={{
+        position: "relative", display: "flex", alignItems: "center",
+        background: "white",
+        border: isRec ? "1.5px solid #D4A017" : "1.5px solid #E5E7EB",
+        borderRadius: 12,
+        overflow: "hidden",
+        transition: "all 0.2s",
+        boxShadow: isRec ? "0 0 0 3px rgba(212,160,23,0.12)" : "none",
+      }}>
         <input
           type="text" value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
-          className="w-full bg-transparent px-4 py-3 text-[14px] text-[#1A3A5C] placeholder-[#8899AA] outline-none"
+          style={{ flex: 1, background: "transparent", border: "none", outline: "none", padding: "13px 16px", fontSize: 15, color: "#111827" }}
         />
         <button
           type="button"
           onClick={() => isRec ? stop() : start(id, onChange)}
-          className={`shrink-0 flex items-center justify-center w-10 h-10 mr-1 rounded-md transition-colors ${isRec ? "bg-red-50" : "hover:bg-[#F8F9FA]"}`}
+          style={{
+            flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center",
+            width: 40, height: 40, margin: "4px", borderRadius: 10, border: "none",
+            background: isRec ? "#FEF2F2" : "#F3F4F6",
+            color: isRec ? "#EF4444" : "#6B7280",
+            cursor: "pointer", transition: "all 0.2s",
+          }}
           title={isRec ? "Berhenti merekam" : "Input suara"}
         >
-          {isRec ? <MicOff size={16} color="#B5341A" className="animate-pulse" /> : <Mic size={16} color="#8899AA" className="hover:text-[#1A3A5C]" />}
+          {isRec ? <MicOff size={17} style={{ animation: "pulse 1s infinite" }} /> : <Mic size={17} />}
         </button>
       </div>
     </div>
@@ -163,17 +175,21 @@ function VoiceInput({ id, label, value, onChange, placeholder = "" }: {
 function Select({ label, value, onChange, options }: { label: string; value: string; onChange: (v: string) => void; options: { value: string; label: string }[] }) {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-[13px] font-semibold text-[#1A3A5C] font-display">{label}</label>
-      <div className="relative">
+      <label style={{ fontSize: 14, fontWeight: 600, color: "#374151" }}>{label}</label>
+      <div style={{ position: "relative" }}>
         <select
           value={value} onChange={e => onChange(e.target.value)}
-          className="w-full appearance-none bg-white px-4 py-3 pr-10 border-[1.5px] border-[#EAECEF] rounded-[10px] text-[14px] text-[#1A3A5C] outline-none transition-colors focus:border-[#D4A017] focus:ring-1 focus:ring-[#D4A017]/20 cursor-pointer"
+          style={{
+            width: "100%", appearance: "none", background: "white",
+            padding: "13px 44px 13px 16px", border: "1.5px solid #E5E7EB", borderRadius: 12,
+            fontSize: 15, color: value ? "#111827" : "#9CA3AF", outline: "none", cursor: "pointer",
+          }}
         >
           <option value="">— Pilih —</option>
           {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
         </select>
-        <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-[#8899AA]">
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+        <div style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", pointerEvents: "none", color: "#9CA3AF" }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
         </div>
       </div>
     </div>
@@ -182,15 +198,32 @@ function Select({ label, value, onChange, options }: { label: string; value: str
 
 function DemoBanner({ onFill }: { onFill: () => void }) {
   return (
-    <div className="flex items-center gap-4 bg-[#FFF8E7] border border-[#F0D080]/60 rounded-[14px] p-4 mb-6 shadow-sm">
-      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#F0C040]/30 text-[#D4A017] shrink-0">
+    <div style={{
+      display: "flex", alignItems: "center", gap: 16,
+      background: "#FFFBEB", border: "1.5px solid #FDE68A",
+      borderRadius: 16, padding: "14px 16px", marginBottom: 24,
+    }}>
+      <div style={{
+        width: 40, height: 40, borderRadius: "50%", background: "#FEF3C7",
+        display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, color: "#D97706",
+      }}>
         <FlaskConical size={20} />
       </div>
-      <div className="flex-1 min-w-0">
-        <div className="font-display font-bold text-[14px] text-[#1A3A5C]">Mode Demo Tersedia</div>
-        <div className="text-[12px] text-[#8899AA] mt-0.5 truncate">Isi otomatis dengan data contoh UMKM kopi untuk presentasi cepat</div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontWeight: 700, fontSize: 14, color: "#1A3A5C" }}>Mode Demo Tersedia</div>
+        <div style={{ fontSize: 12, color: "#6B7280", marginTop: 2 }}>Isi otomatis dengan data contoh UMKM kopi untuk presentasi cepat</div>
       </div>
-      <button onClick={onFill} className="shrink-0 px-4 py-2.5 bg-gradient-to-br from-[#D4A017] to-[#F0C040] hover:opacity-90 text-[#1A3A5C] shadow hover:shadow-md active:scale-[0.98] transition-all rounded-xl font-display font-bold text-[13px]">
+      <button
+        onClick={onFill}
+        style={{
+          flexShrink: 0, padding: "10px 20px",
+          background: "linear-gradient(135deg, #D4A017, #F5C842)",
+          border: "none", borderRadius: 12, cursor: "pointer",
+          fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 13,
+          color: "#1A3A5C", whiteSpace: "nowrap",
+          boxShadow: "0 2px 12px rgba(212,160,23,0.3)",
+        }}
+      >
         ⚡ Isi Demo Data
       </button>
     </div>
@@ -390,263 +423,262 @@ export default function AssessmentPage() {
     router.push(`/dashboard?${params.toString()}`);
   };
 
-  const cardClassName = "w-full max-w-[680px] mx-auto bg-white rounded-[16px] md:rounded-[20px] p-6 md:p-[36px_40px] shadow-[0_8px_40px_rgba(26,58,92,0.10)] border border-[rgba(212,160,23,0.12)] page-enter";
+  const CARD_STYLE = {
+    width: "100%", maxWidth: 820,
+    background: "white",
+    borderRadius: 24,
+    boxShadow: "0 8px 40px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04)",
+    overflow: "hidden" as const,
+    position: "relative" as const,
+  };
+  const STEP_STYLE = { padding: "32px 40px 28px" };
 
   const t = TRANSLATIONS[form.bahasaDaerah] || TRANSLATIONS.id;
 
   return (
-    <div className="min-h-screen bg-[var(--krem-linen)] px-4 md:px-6 pt-20 md:pt-[100px] pb-12 md:pb-[60px] pattern-batik page-enter">
-      <div className="w-full max-w-[740px] mx-auto">
-        <div className="text-center mb-8">
-          <div className="text-[12px] md:text-[13px] font-semibold text-[#D4A017] tracking-[0.08em] mb-2">PENILAIAN KESIAPAN EKSPOR</div>
-          <h1 className="font-display font-extrabold text-[26px] md:text-[32px] text-[#1A3A5C] mb-1 leading-tight">{t.title}</h1>
-          <p className="text-[#8899AA] text-[14px] md:text-[15px]">{t.subtitle}</p>
+    <div style={{ minHeight: "100vh", background: "#F3EDDF", display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <div style={{ width: "100%", maxWidth: 860, padding: "100px 20px 60px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+
+        {/* ── PAGE HEADER ── */}
+        <div style={{ textAlign: "center", marginBottom: 28, width: "100%" }}>
+          <div style={{ fontSize: 11, fontWeight: 800, color: "#D4A017", letterSpacing: "0.16em", textTransform: "uppercase", marginBottom: 10 }}>PENILAIAN KESIAPAN EKSPOR</div>
+          <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 38, color: "#0D2137", margin: 0, lineHeight: 1.2 }}>{t.title}</h1>
+          <p style={{ fontSize: 15, color: "#6B7280", marginTop: 10, marginBottom: 0 }}>{t.subtitle}</p>
         </div>
 
-        <div className="flex justify-center mb-6">
+        {/* ── VOICE BUTTON ── */}
+        <div style={{ marginBottom: 28 }}>
           <button
             onClick={toggleAssistant}
-            className={`flex items-center gap-2 px-5 py-2 rounded-full font-semibold text-[13px] transition-all duration-300 border-[1.5px] ${assistantActive ? "border-[#D4A017] bg-[rgba(212,160,23,0.1)] text-[#1A3A5C]" : "border-[rgba(26,58,92,0.15)] bg-white text-[#1A3A5C]"}`}
+            style={{
+              display: "flex", alignItems: "center", gap: 8,
+              padding: "10px 24px", borderRadius: 999,
+              border: assistantActive ? "1.5px solid #D4A017" : "1.5px solid #D1D5DB",
+              background: assistantActive ? "#FFFBEB" : "white",
+              color: assistantActive ? "#92400E" : "#374151",
+              fontWeight: 600, fontSize: 14, cursor: "pointer",
+              boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
+              transition: "all 0.2s",
+            }}
           >
-            {assistantActive ? <Volume2 size={16} color="#D4A017" /> : <VolumeX size={16} color="#8899AA" />}
+            {assistantActive ? <Volume2 size={15} color="#D4A017" /> : <VolumeX size={15} color="#9CA3AF" />}
             {assistantActive ? t.assistant_on : t.assistant_off}
           </button>
         </div>
 
-        <JourneyTracker currentStep={step} />
-        <div className="h-6 md:h-7" />
+        {/* ── JOURNEY TRACKER ── */}
+        <div style={{ width: "100%", marginBottom: 24 }}>
+          <JourneyTracker currentStep={step} />
+        </div>
 
-        {/* STEP 1 */}
-        {step === 1 && (
-          <div className={cardClassName}>
-            <DemoBanner onFill={fillDemoProfile} />
-            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 22, color: "#1A3A5C", marginBottom: 24 }}>🏪 {t.profile}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-[18px]">
-              <div className="md:col-span-2">
+        {/* ── FORM CARD ── */}
+        <div style={CARD_STYLE}>
+          {/* Progress bar */}
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: "#F3F4F6", zIndex: 2 }}>
+            <div style={{ height: "100%", width: `${(step / 5) * 100}%`, background: "linear-gradient(90deg, #D4A017, #F5C842)", borderRadius: 4, transition: "width 0.6s ease" }} />
+          </div>
+
+          {/* STEP 1 */}
+          {step === 1 && (
+            <div style={STEP_STYLE}>
+              <DemoBanner onFill={fillDemoProfile} />
+              <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 22, color: "#111827", display: "flex", alignItems: "center", gap: 12, margin: "0 0 8px 0" }}>
+                <span>🏪</span> {t.profile}
+              </h2>
+              <p style={{ fontSize: 14, color: "#6B7280", marginBottom: 24 }}>Isi informasi dasar usaha Anda untuk profil ERS.</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
                 <VoiceInput id="namaUsaha" label="Nama Usaha / Brand" value={form.namaUsaha} onChange={v => update("namaUsaha", v)} placeholder="Contoh: Kopi Gayo Bu Aminah" />
-              </div>
-              <VoiceInput id="pemilikNama" label="Nama Pemilik" value={form.pemilikNama} onChange={v => update("pemilikNama", v)} placeholder="Nama lengkap" />
-              <VoiceInput id="noTelepon" label="No. WhatsApp" value={form.noTelepon} onChange={v => update("noTelepon", v)} placeholder="08xx-xxxx-xxxx" />
-              <Select label="Provinsi" value={form.provinsi} onChange={v => update("provinsi", v)} options={PROVINSI_LIST.map(p => ({ value: p, label: p }))} />
-              <VoiceInput id="kabupaten" label="Kabupaten / Kota" value={form.kabupaten} onChange={v => update("kabupaten", v)} placeholder="Contoh: Aceh Tengah" />
-              <div className="md:col-span-2">
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                  <VoiceInput id="pemilikNama" label="Nama Pemilik" value={form.pemilikNama} onChange={v => update("pemilikNama", v)} placeholder="Nama lengkap" />
+                  <VoiceInput id="noTelepon" label="No. WhatsApp" value={form.noTelepon} onChange={v => update("noTelepon", v)} placeholder="08xx-xxxx-xxxx" />
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                  <Select label="Provinsi" value={form.provinsi} onChange={v => update("provinsi", v)} options={PROVINSI_LIST.map(p => ({ value: p, label: p }))} />
+                  <VoiceInput id="kabupaten" label="Kabupaten / Kota" value={form.kabupaten} onChange={v => update("kabupaten", v)} placeholder="Contoh: Aceh Tengah" />
+                </div>
                 <Select label="Bahasa Daerah Pilihan UI" value={form.bahasaDaerah} onChange={v => update("bahasaDaerah", v)} options={BAHASA_DAERAH.map(b => ({ value: b.kode, label: b.label }))} />
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* STEP 2 */}
-        {step === 2 && (
-          <div className={cardClassName}>
-            <DemoBanner onFill={fillDemoProduk} />
-            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 22, color: "#1A3A5C", marginBottom: 24 }}>📦 {t.product}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-[18px]">
-              <div className="md:col-span-2">
+          {/* STEP 2 */}
+          {step === 2 && (
+            <div style={STEP_STYLE}>
+              <DemoBanner onFill={fillDemoProduk} />
+              <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 22, color: "#111827", display: "flex", alignItems: "center", gap: 12, margin: "0 0 8px 0" }}>
+                <span>📦</span> {t.product}
+              </h2>
+              <p style={{ fontSize: 14, color: "#6B7280", marginBottom: 24 }}>Informasi produk yang akan Anda ekspor ke pasar internasional.</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
                 <VoiceInput id="namaProduk" label="Nama Produk" value={form.namaProduk} onChange={v => update("namaProduk", v)} placeholder="Contoh: Keripik Tempe Rempah Original" />
-              </div>
-              <div className="md:col-span-2">
                 <Select label="Kategori Produk (Kode HS)" value={form.kategoriHS} onChange={v => update("kategoriHS", v)} options={KATEGORI_PRODUK.map(k => ({ value: k.kode, label: `${k.kode} — ${k.label}` }))} />
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                  <VoiceInput id="kapasitas" label="Kapasitas / Bulan" value={form.kapasitasBulanan} onChange={v => update("kapasitasBulanan", v)} placeholder="Contoh: 500" />
+                  <Select label="Satuan" value={form.satuan} onChange={v => update("satuan", v)} options={[{ value: "kg", label: "Kilogram (kg)" }, { value: "pcs", label: "Pieces (pcs)" }, { value: "liter", label: "Liter" }, { value: "lusin", label: "Lusin" }]} />
+                </div>
               </div>
-              <VoiceInput id="kapasitas" label="Kapasitas / Bulan" value={form.kapasitasBulanan} onChange={v => update("kapasitasBulanan", v)} placeholder="Contoh: 500" />
-              <Select label="Satuan" value={form.satuan} onChange={v => update("satuan", v)} options={[{ value: "kg", label: "Kilogram (kg)" }, { value: "pcs", label: "Pieces (pcs)" }, { value: "liter", label: "Liter" }, { value: "lusin", label: "Lusin" }]} />
             </div>
-          </div>
-        )}
+          )}
 
-        {/* STEP 3 */}
-        {step === 3 && (
-          <div className={cardClassName}>
-            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 22, color: "#1A3A5C", marginBottom: 8 }}>🖼️ {t.packaging}</h2>
-            <p style={{ fontSize: 14, color: "#8899AA", marginBottom: 20 }}>Upload foto kemasan depan dan belakang, atau gunakan Demo Mode untuk simulasi instan.</p>
-
-            {/* Demo shortcut */}
-            {form.kemasanScore === null && (
-              <div className="flex items-center gap-4 bg-[#FFF8E7] border border-[#F0D080]/60 rounded-[14px] p-4 mb-6 shadow-sm">
-                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#F0C040]/30 text-[#D4A017] shrink-0">
-                  <FlaskConical size={20} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="font-display font-bold text-[14px] text-[#1A3A5C]">Mode Demo: Simulasi Analisis Kemasan</div>
-                  <div className="text-[12px] text-[#8899AA] mt-0.5 truncate">Tidak perlu upload ulang file asli untuk presentasi</div>
-                </div>
-                <button onClick={skipWithMockScoreKemasan} className="shrink-0 px-4 py-2.5 bg-gradient-to-br from-[#D4A017] to-[#F0C040] hover:opacity-90 text-[#1A3A5C] shadow hover:shadow-md active:scale-[0.98] transition-all rounded-xl font-display font-bold text-[13px]">
-                  ⚡ Simulasi
+          {/* STEP 3 */}
+          {step === 3 && (
+            <div style={STEP_STYLE}>
+              <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 22, color: "#111827", display: "flex", alignItems: "center", gap: 12, margin: "0 0 8px 0" }}>
+                <span>🖼️</span> {t.packaging}
+              </h2>
+              <p style={{ fontSize: 14, color: "#6B7280", marginBottom: 24 }}>Upload foto kemasan depan dan belakang, atau gunakan Demo Mode untuk simulasi instan.</p>
+              {form.kemasanScore === null && <DemoBanner onFill={skipWithMockScoreKemasan} />}
+              <div style={{ position: "relative" }}>
+                <FileUploadZone
+                  onFiles={files => { update("kemasanFiles", files); if (files.length === 0) update("kemasanScore", null); }}
+                  accept={{ "image/*": [".jpg", ".jpeg", ".png", ".webp"] }}
+                  maxFiles={4}
+                  label="Upload Foto Kemasan"
+                  hint="Seret & lepas foto kemasan di sini, atau klik untuk pilih"
+                />
+                {analyzing && <ScanningOverlay />}
+              </div>
+              {form.kemasanFiles.length > 0 && form.kemasanScore === null && (
+                <button onClick={handleAnalyzePackaging} disabled={analyzing} style={{ marginTop: 16, width: "100%", padding: "13px", borderRadius: 12, border: "none", cursor: analyzing ? "wait" : "pointer", background: "linear-gradient(135deg, #1A3A5C, #2E6AA0)", color: "white", fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                  {analyzing ? <><Loader2 size={18} style={{ animation: "spin 1s linear infinite" }} /> Menganalisis...</> : "🤖 Analisis Kemasan dengan AI"}
                 </button>
-              </div>
-            )}
-
-            <div style={{ position: "relative" }}>
-              <FileUploadZone
-                onFiles={files => { update("kemasanFiles", files); if (files.length === 0) update("kemasanScore", null); }}
-                accept={{ "image/*": [".jpg", ".jpeg", ".png", ".webp"] }}
-                maxFiles={4}
-                label="Upload Foto Kemasan"
-                hint="Seret & lepas foto kemasan di sini, atau klik untuk pilih"
-              />
-              {analyzing && <ScanningOverlay />}
-            </div>
-
-            {form.kemasanFiles.length > 0 && form.kemasanScore === null && (
-              <button onClick={handleAnalyzePackaging} disabled={analyzing} style={{
-                marginTop: 16, width: "100%", padding: "13px", borderRadius: 12, border: "none",
-                cursor: analyzing ? "wait" : "pointer",
-                background: "linear-gradient(135deg, #1A3A5C, #2E6AA0)", color: "white",
-                fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 15,
-                display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-              }}>
-                {analyzing ? <><Loader2 size={18} style={{ animation: "spin 1s linear infinite" }} /> Menganalisis dengan AI...</> : "🤖 Analisis Kemasan dengan AI"}
-              </button>
-            )}
-
-            {form.kemasanScore !== null && (
-              <div style={{ marginTop: 16 }}>
-                <div style={{ padding: "18px 22px", borderRadius: 12, background: form.kemasanScore >= 70 ? "rgba(46,125,82,0.08)" : "rgba(224,123,32,0.08)", border: `1.5px solid ${form.kemasanScore >= 70 ? "rgba(46,125,82,0.3)" : "rgba(224,123,32,0.3)"}` }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 38, color: form.kemasanScore >= 70 ? "#2E7D52" : "#E07B20" }}>{form.kemasanScore}</div>
-                    <div>
-                      <div style={{ fontWeight: 700, color: "#1A3A5C", fontSize: 15 }}>Skor Kemasan /100</div>
-                      <div style={{ fontSize: 13, color: "#8899AA", marginTop: 2 }}>
-                        {form.kemasanScore >= 80 ? "✅ Kemasan sudah baik" : form.kemasanScore >= 60 ? "⚠️ Perlu sedikit perbaikan label" : "❌ Kemasan perlu revisi"}
-                        {demoSkipped && " (Demo)"}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* AI INSIGHTS */}
-                <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 10 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "#1A3A5C", marginLeft: 4 }}>Deksripsi Temuan AI:</div>
-                  {form.kemasanInsights?.map(insight => (
-                    <div key={insight.id} style={{
-                      padding: "12px 14px", borderRadius: 10, background: "white",
-                      border: "1px solid rgba(26,58,92,0.08)", display: "flex", gap: 12, alignItems: "flex-start",
-                      boxShadow: "0 2px 8px rgba(26,58,92,0.02)"
-                    }}>
-                      <div style={{ marginTop: 2 }}>
-                        {insight.status === "success" && <CheckCircle size={16} color="#2E7D52" />}
-                        {insight.status === "warning" && <AlertTriangle size={16} color="#D4A017" />}
-                        {insight.status === "error" && <XCircle size={16} color="#B5341A" />}
-                      </div>
+              )}
+              {form.kemasanScore !== null && (
+                <div style={{ marginTop: 16 }}>
+                  <div style={{ padding: "18px 22px", borderRadius: 12, background: form.kemasanScore >= 70 ? "rgba(46,125,82,0.08)" : "rgba(224,123,32,0.08)", border: `1.5px solid ${form.kemasanScore >= 70 ? "rgba(46,125,82,0.3)" : "rgba(224,123,32,0.3)"}` }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                      <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 38, color: form.kemasanScore >= 70 ? "#2E7D52" : "#E07B20" }}>{form.kemasanScore}</div>
                       <div>
-                        <div style={{ fontSize: 13, fontWeight: 700, color: "#1A3A5C" }}>{insight.label}</div>
-                        <div style={{ fontSize: 12, color: "#5A6878", marginTop: 2, lineHeight: 1.4 }}>{insight.detail}</div>
+                        <div style={{ fontWeight: 700, color: "#1A3A5C", fontSize: 15 }}>Skor Kemasan /100</div>
+                        <div style={{ fontSize: 13, color: "#8899AA", marginTop: 2 }}>
+                          {form.kemasanScore >= 80 ? "✅ Kemasan sudah baik" : form.kemasanScore >= 60 ? "⚠️ Perlu sedikit perbaikan label" : "❌ Kemasan perlu revisi"}
+                          {demoSkipped && " (Demo)"}
+                        </div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
-            <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
-          </div>
-        )}
-
-        {/* STEP 4 */}
-        {step === 4 && (
-          <div className={cardClassName}>
-            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 22, color: "#1A3A5C", marginBottom: 8 }}>📋 {t.legality}</h2>
-            <p style={{ fontSize: 14, color: "#8899AA", marginBottom: 20 }}>Upload dokumen perizinan atau gunakan Demo Mode untuk verifikasi instan.</p>
-
-            {form.dokumenScore === null && (
-              <div className="flex items-center gap-4 bg-[#FFF8E7] border border-[#F0D080]/60 rounded-[14px] p-4 mb-6 shadow-sm">
-                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#F0C040]/30 text-[#D4A017] shrink-0">
-                  <FlaskConical size={20} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="font-display font-bold text-[14px] text-[#1A3A5C]">Mode Demo: Simulasi OCR Dokumen</div>
-                  <div className="text-[12px] text-[#8899AA] mt-0.5 truncate">Lewati proses upload untuk presentasi OCR + BPOM</div>
-                </div>
-                <button onClick={skipWithMockScoreDokumen} className="shrink-0 px-4 py-2.5 bg-gradient-to-br from-[#D4A017] to-[#F0C040] hover:opacity-90 text-[#1A3A5C] shadow hover:shadow-md active:scale-[0.98] transition-all rounded-xl font-display font-bold text-[13px]">
-                  ⚡ Simulasi
-                </button>
-              </div>
-            )}
-
-            <Select label="Jenis Dokumen" value={form.dokumenJenis} onChange={v => { update("dokumenJenis", v); if (!demoSkipped) update("dokumenScore", null); }} options={[
-              { value: "PIRT", label: "PIRT (Pangan Industri Rumah Tangga)" },
-              { value: "NIE", label: "NIE BPOM" },
-              { value: "HALAL", label: "Sertifikat Halal MUI" },
-              { value: "SNI", label: "Sertifikat SNI" },
-              { value: "MEREK", label: "Merek Terdaftar DJKI" },
-            ]} />
-            <div style={{ height: 16 }} />
-            <FileUploadZone onFiles={files => update("dokumenFiles", files)} maxFiles={2} label={`Upload Dokumen ${form.dokumenJenis}`} hint="Foto atau scan PDF dokumen — resolusi minimal 300dpi" />
-
-            {form.dokumenFiles.length > 0 && form.dokumenScore === null && (
-              <button onClick={handleValidateDoc} disabled={validating} style={{
-                marginTop: 16, width: "100%", padding: "13px", borderRadius: 12, border: "none",
-                cursor: validating ? "wait" : "pointer",
-                background: "linear-gradient(135deg, #1A3A5C, #2E6AA0)", color: "white",
-                fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 15,
-                display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-              }}>
-                {validating ? <><Loader2 size={18} style={{ animation: "spin 1s linear infinite" }} /> Verifikasi ke BPOM/DJKI...</> : "🔍 Verifikasi Dokumen (OCR + API)"}
-              </button>
-            )}
-
-            {form.dokumenScore !== null && (
-              <div style={{ marginTop: 16, padding: "18px 22px", borderRadius: 12, background: "rgba(46,125,82,0.08)", border: "1.5px solid rgba(46,125,82,0.3)" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-                  <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 38, color: "#2E7D52" }}>{form.dokumenScore}</div>
-                  <div>
-                    <div style={{ fontWeight: 700, color: "#1A3A5C", fontSize: 15 }}>Skor Legalitas /100</div>
-                    <div style={{ fontSize: 13, color: "#2E7D52" }}>✅ Dokumen Valid{demoSkipped && " (Demo)"}</div>
+                  </div>
+                  <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 10 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: "#1A3A5C", marginLeft: 4 }}>Deksripsi Temuan AI:</div>
+                    {form.kemasanInsights?.map(insight => (
+                      <div key={insight.id} style={{ padding: "12px 14px", borderRadius: 10, background: "white", border: "1px solid rgba(26,58,92,0.08)", display: "flex", gap: 12, alignItems: "flex-start" }}>
+                        <div style={{ marginTop: 2 }}>
+                          {insight.status === "success" && <CheckCircle size={16} color="#2E7D52" />}
+                          {insight.status === "warning" && <AlertTriangle size={16} color="#D4A017" />}
+                          {insight.status === "error" && <XCircle size={16} color="#B5341A" />}
+                        </div>
+                        <div>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: "#1A3A5C" }}>{insight.label}</div>
+                          <div style={{ fontSize: 12, color: "#5A6878", marginTop: 2, lineHeight: 1.4 }}>{insight.detail}</div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-                <div style={{ fontSize: 13, color: "#5A7060", background: "rgba(46,125,82,0.07)", padding: "10px 14px", borderRadius: 8 }}>{form.dokumenPesan}</div>
-              </div>
-            )}
-            <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
-          </div>
-        )}
-
-        {/* STEP 5 */}
-        {step === 5 && (
-          <div className={cardClassName}>
-            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 22, color: "#1A3A5C", marginBottom: 8 }}>🌏 {t.market}</h2>
-            <p style={{ fontSize: 14, color: "#8899AA", marginBottom: 24 }}>ERS Anda akan disesuaikan dengan regulasi negara yang dipilih.</p>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(145px, 1fr))", gap: 12 }}>
-              {MARKETS.map(m => (
-                <button key={m.kode} onClick={() => update("targetNegara", m.kode)} style={{
-                  padding: "16px 12px", borderRadius: 12, cursor: "pointer",
-                  border: form.targetNegara === m.kode ? "2px solid #D4A017" : "1.5px solid rgba(26,58,92,0.15)",
-                  background: form.targetNegara === m.kode ? "rgba(212,160,23,0.08)" : "white",
-                  transition: "all 0.2s", textAlign: "center",
-                  boxShadow: form.targetNegara === m.kode ? "0 4px 16px rgba(212,160,23,0.2)" : "none",
-                }}>
-                  <div style={{ fontSize: 28, marginBottom: 6 }}>{m.bendera}</div>
-                  <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 13, color: "#1A3A5C" }}>{m.negara}</div>
-                  <div style={{ fontSize: 11, color: "#2E7D52", fontWeight: 600, marginTop: 2 }}>{m.demandGrowth}</div>
-                </button>
-              ))}
+              )}
+              <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
             </div>
-            {form.targetNegara && (() => {
-              const m = MARKETS.find(x => x.kode === form.targetNegara);
-              if (!m) return null;
-              return (
-                <div style={{ marginTop: 20, padding: "18px 20px", borderRadius: 12, background: "rgba(26,58,92,0.04)", border: "1px solid rgba(26,58,92,0.12)" }}>
-                  <div style={{ fontWeight: 700, color: "#1A3A5C", marginBottom: 8 }}>{m.bendera} {m.negara} — Persyaratan Utama</div>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                    {m.barrierUtama.map(b => <span key={b} style={{ background: "rgba(181,52,26,0.08)", color: "#B5341A", fontSize: 12, padding: "3px 10px", borderRadius: 100, fontWeight: 500 }}>{b}</span>)}
-                  </div>
-                  <div style={{ fontSize: 13, color: "#5A6878", marginTop: 10, fontStyle: "italic" }}>{m.highlight}</div>
-                </div>
-              );
-            })()}
-          </div>
-        )}
+          )}
 
-        {/* Navigation */}
-        <div className="flex justify-between items-center mt-6 md:mt-8 w-full max-w-[680px] mx-auto gap-3">
-          {step > 1 ? (
-            <button onClick={() => setStep(s => s - 1)} className="px-4 md:px-7 py-3 rounded-xl border-[1.5px] border-[rgba(26,58,92,0.2)] bg-white text-[#1A3A5C] font-display font-semibold text-[14px] md:text-[15px] cursor-pointer">← {t.back}</button>
-          ) : <div />}
-          {step < 5 ? (
-            <button onClick={() => { if (canNext[step]) setStep(s => s + 1); else toast.error("Lengkapi semua data sebelum melanjutkan"); }} className={`px-6 md:px-9 py-3 rounded-xl border-none font-display font-bold text-[14px] md:text-[15px] cursor-pointer transition-all ${canNext[step] ? "bg-gradient-to-br from-[#D4A017] to-[#F0C040] text-[#1A3A5C] shadow-[0_4px_16px_rgba(212,160,23,0.3)]" : "bg-[rgba(26,58,92,0.1)] text-[#8899AA]"}`}>{t.next} →</button>
-          ) : (
-            <button onClick={handleSubmit} className="px-6 md:px-10 py-3 rounded-xl border-none bg-gradient-to-br from-[#2E7D52] to-[#3FA86E] text-white font-display font-bold text-[15px] md:text-[16px] cursor-pointer shadow-[0_4px_20px_rgba(46,125,82,0.35)]">🚀 {t.finish}</button>
+          {/* STEP 4 */}
+          {step === 4 && (
+            <div style={STEP_STYLE}>
+              <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 22, color: "#111827", display: "flex", alignItems: "center", gap: 12, margin: "0 0 8px 0" }}>
+                <span>📋</span> {t.legality}
+              </h2>
+              <p style={{ fontSize: 14, color: "#6B7280", marginBottom: 24 }}>Upload dokumen perizinan resmi atau gunakan Mode Demo untuk verifikasi instan.</p>
+              {form.dokumenScore === null && <DemoBanner onFill={skipWithMockScoreDokumen} />}
+              <Select label="Jenis Dokumen" value={form.dokumenJenis} onChange={v => { update("dokumenJenis", v); if (!demoSkipped) update("dokumenScore", null); }} options={[
+                { value: "PIRT", label: "PIRT (Pangan Industri Rumah Tangga)" },
+                { value: "NIE", label: "NIE BPOM" },
+                { value: "HALAL", label: "Sertifikat Halal MUI" },
+                { value: "SNI", label: "Sertifikat SNI" },
+                { value: "MEREK", label: "Merek Terdaftar DJKI" },
+              ]} />
+              <div style={{ height: 16 }} />
+              <FileUploadZone onFiles={files => update("dokumenFiles", files)} maxFiles={2} label={`Upload Dokumen ${form.dokumenJenis}`} hint="Foto atau scan PDF dokumen" />
+              {form.dokumenFiles.length > 0 && form.dokumenScore === null && (
+                <button onClick={handleValidateDoc} disabled={validating} style={{ marginTop: 16, width: "100%", padding: "13px", borderRadius: 12, border: "none", cursor: validating ? "wait" : "pointer", background: "linear-gradient(135deg, #1A3A5C, #2E6AA0)", color: "white", fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                  {validating ? <><Loader2 size={18} style={{ animation: "spin 1s linear infinite" }} /> Verifikasi...</> : "🔍 Verifikasi Dokumen (OCR + API)"}
+                </button>
+              )}
+              {form.dokumenScore !== null && (
+                <div style={{ marginTop: 16, padding: "18px 22px", borderRadius: 12, background: "rgba(46,125,82,0.08)", border: "1.5px solid rgba(46,125,82,0.3)" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+                    <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 38, color: "#2E7D52" }}>{form.dokumenScore}</div>
+                    <div>
+                      <div style={{ fontWeight: 700, color: "#1A3A5C", fontSize: 15 }}>Skor Legalitas /100</div>
+                      <div style={{ fontSize: 13, color: "#2E7D52" }}>✅ Dokumen Valid{demoSkipped && " (Demo)"}</div>
+                    </div>
+                  </div>
+                  <div style={{ fontSize: 13, color: "#5A7060", background: "rgba(46,125,82,0.07)", padding: "10px 14px", borderRadius: 8 }}>{form.dokumenPesan}</div>
+                </div>
+              )}
+              <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+            </div>
+          )}
+
+          {/* STEP 5 */}
+          {step === 5 && (
+            <div style={STEP_STYLE}>
+              <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 22, color: "#111827", display: "flex", alignItems: "center", gap: 12, margin: "0 0 8px 0" }}>
+                <span>🌏</span> {t.market}
+              </h2>
+              <p style={{ fontSize: 14, color: "#6B7280", marginBottom: 24 }}>ERS Anda akan disesuaikan dengan regulasi negara yang dipilih.</p>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(145px, 1fr))", gap: 12 }}>
+                {MARKETS.map(m => (
+                  <button key={m.kode} onClick={() => update("targetNegara", m.kode)} style={{ padding: "16px 12px", borderRadius: 12, cursor: "pointer", border: form.targetNegara === m.kode ? "2px solid #D4A017" : "1.5px solid #E5E7EB", background: form.targetNegara === m.kode ? "rgba(212,160,23,0.08)" : "white", transition: "all 0.2s", textAlign: "center", boxShadow: form.targetNegara === m.kode ? "0 4px 16px rgba(212,160,23,0.2)" : "0 1px 4px rgba(0,0,0,0.04)" }}>
+                    <div style={{ fontSize: 28, marginBottom: 6 }}>{m.bendera}</div>
+                    <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 13, color: "#1A3A5C" }}>{m.negara}</div>
+                    <div style={{ fontSize: 11, color: "#2E7D52", fontWeight: 600, marginTop: 2 }}>{m.demandGrowth}</div>
+                  </button>
+                ))}
+              </div>
+              {form.targetNegara && (() => {
+                const m = MARKETS.find(x => x.kode === form.targetNegara);
+                if (!m) return null;
+                return (
+                  <div style={{ marginTop: 20, padding: "18px 20px", borderRadius: 12, background: "rgba(26,58,92,0.04)", border: "1px solid rgba(26,58,92,0.12)" }}>
+                    <div style={{ fontWeight: 700, color: "#1A3A5C", marginBottom: 8 }}>{m.bendera} {m.negara} — Persyaratan Utama</div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                      {m.barrierUtama.map(b => <span key={b} style={{ background: "rgba(181,52,26,0.08)", color: "#B5341A", fontSize: 12, padding: "3px 10px", borderRadius: 100, fontWeight: 500 }}>{b}</span>)}
+                    </div>
+                    <div style={{ fontSize: 13, color: "#5A6878", marginTop: 10, fontStyle: "italic" }}>{m.highlight}</div>
+                  </div>
+                );
+              })()}
+            </div>
           )}
         </div>
+
+        {/* ── NAVIGATION ── */}
+        <div style={{ width: "100%", maxWidth: 820, marginTop: 20, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          {step > 1 ? (
+            <button
+              onClick={() => setStep(s => s - 1)}
+              style={{ display: "flex", alignItems: "center", gap: 8, padding: "13px 28px", borderRadius: 14, border: "1.5px solid #D1D5DB", background: "white", color: "#374151", fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 15, cursor: "pointer", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", transition: "all 0.2s" }}
+            >
+              ← {t.back}
+            </button>
+          ) : <div />}
+
+          {step < 5 ? (
+            <button
+              onClick={() => { if (canNext[step]) setStep(s => s + 1); else toast.error("Lengkapi semua data sebelum melanjutkan"); }}
+              style={{ display: "flex", alignItems: "center", gap: 8, padding: "13px 36px", borderRadius: 14, border: "none", background: canNext[step] ? "linear-gradient(135deg, #D4A017, #F5C842)" : "#E5E7EB", color: canNext[step] ? "#1A3A5C" : "#9CA3AF", fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 15, cursor: canNext[step] ? "pointer" : "not-allowed", boxShadow: canNext[step] ? "0 4px 18px rgba(212,160,23,0.4)" : "none", transition: "all 0.2s" }}
+            >
+              {t.next} →
+            </button>
+          ) : (
+            <button
+              onClick={handleSubmit}
+              style={{ display: "flex", alignItems: "center", gap: 8, padding: "13px 32px", borderRadius: 14, border: "none", background: "linear-gradient(135deg, #1A5C3A, #2E8B57)", color: "white", fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 15, cursor: "pointer", boxShadow: "0 4px 18px rgba(30,100,60,0.35)" }}
+            >
+              🚀 {t.finish}
+            </button>
+          )}
+        </div>
+
+
       </div>
     </div>
   );
