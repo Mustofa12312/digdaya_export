@@ -1,7 +1,9 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { User } from "@supabase/supabase-js";
 
 const navLinks = [
   { href: "/", label: "Beranda" },
@@ -13,6 +15,19 @@ const navLinks = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <nav style={{
@@ -50,11 +65,29 @@ export default function Navbar() {
             onMouseLeave={e => { (e.target as HTMLElement).style.color = "rgba(245,240,232,0.8)"; (e.target as HTMLElement).style.background = "transparent"; }}
             >{l.label}</Link>
           ))}
-          <Link href="/login" style={{
-            fontFamily: "var(--font-body)", fontSize: 14, fontWeight: 600,
-            color: "#D4A017", textDecoration: "none",
-            padding: "8px 16px", borderRadius: 8, transition: "all 0.2s"
-          }}>Masuk</Link>
+          {user ? (
+            <Link href="/profile" style={{
+              display: "flex", alignItems: "center", justifyContent: "center",
+              width: 36, height: 36, borderRadius: "50%",
+              background: "linear-gradient(135deg, #1A3A5C, #2E6AA0)",
+              color: "#F5F0E8", fontFamily: "var(--font-display)", fontWeight: 700,
+              textDecoration: "none", border: "2px solid rgba(212,160,23,0.8)",
+              boxShadow: "0 2px 8px rgba(212,160,23,0.3)",
+              transition: "transform 0.2s, borderColor 0.2s",
+              marginLeft: 8,
+            }}
+            onMouseEnter={e => { (e.currentTarget.style.transform = "scale(1.05)"); (e.currentTarget.style.borderColor = "#F0C040"); }}
+            onMouseLeave={e => { (e.currentTarget.style.transform = "scale(1)"); (e.currentTarget.style.borderColor = "rgba(212,160,23,0.8)"); }}
+            >
+              {user.user_metadata?.username?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || "U"}
+            </Link>
+          ) : (
+            <Link href="/login" style={{
+              fontFamily: "var(--font-body)", fontSize: 14, fontWeight: 600,
+              color: "#D4A017", textDecoration: "none",
+              padding: "8px 16px", borderRadius: 8, transition: "all 0.2s"
+            }}>Masuk</Link>
+          )}
           <Link href="/assessment" style={{
             fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 14,
             background: "linear-gradient(135deg, #D4A017, #F0C040)",
@@ -75,6 +108,23 @@ export default function Navbar() {
       {/* Mobile Menu */}
       {open && (
         <div style={{ background: "rgba(13,33,55,0.97)", padding: "16px 24px 24px", borderTop: "1px solid rgba(212,160,23,0.15)" }}>
+          {user && (
+            <div style={{ display: "flex", alignItems: "center", gap: 12, paddingBottom: 16, borderBottom: "1px solid rgba(255,255,255,0.06)", marginBottom: 8 }}>
+              <div style={{
+                display: "flex", alignItems: "center", justifyContent: "center",
+                width: 44, height: 44, borderRadius: "50%",
+                background: "linear-gradient(135deg, #1A3A5C, #2E6AA0)",
+                color: "#F5F0E8", fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 18,
+                border: "2px solid rgba(212,160,23,0.8)",
+              }}>
+                {user.user_metadata?.username?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || "U"}
+              </div>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <span style={{ color: "#F5F0E8", fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 16 }}>{user.user_metadata?.username || "Pengguna"}</span>
+                <span style={{ color: "rgba(245,240,232,0.6)", fontSize: 12 }}>{user.email}</span>
+              </div>
+            </div>
+          )}
           {navLinks.map(l => (
             <Link key={l.href} href={l.href} onClick={() => setOpen(false)} style={{
               display: "block", fontFamily: "var(--font-body)", fontSize: 16,
@@ -82,11 +132,19 @@ export default function Navbar() {
               borderBottom: "1px solid rgba(255,255,255,0.06)",
             }}>{l.label}</Link>
           ))}
-          <Link href="/login" onClick={() => setOpen(false)} style={{
-            display: "block", fontFamily: "var(--font-body)", fontSize: 16,
-            color: "#D4A017", textDecoration: "none", padding: "12px 0", fontWeight: 600,
-            borderBottom: "1px solid rgba(255,255,255,0.06)",
-          }}>Masuk ke Akun</Link>
+          {user ? (
+            <Link href="/profile" onClick={() => setOpen(false)} style={{
+              display: "block", fontFamily: "var(--font-body)", fontSize: 16,
+              color: "#D4A017", textDecoration: "none", padding: "12px 0", fontWeight: 600,
+              borderBottom: "1px solid rgba(255,255,255,0.06)",
+            }}>Profil & Pengaturan</Link>
+          ) : (
+            <Link href="/login" onClick={() => setOpen(false)} style={{
+              display: "block", fontFamily: "var(--font-body)", fontSize: 16,
+              color: "#D4A017", textDecoration: "none", padding: "12px 0", fontWeight: 600,
+              borderBottom: "1px solid rgba(255,255,255,0.06)",
+            }}>Masuk ke Akun</Link>
+          )}
           <Link href="/assessment" onClick={() => setOpen(false)} style={{
             display: "block", textAlign: "center", marginTop: 16,
             fontFamily: "var(--font-display)", fontWeight: 700,
@@ -106,3 +164,4 @@ export default function Navbar() {
     </nav>
   );
 }
+

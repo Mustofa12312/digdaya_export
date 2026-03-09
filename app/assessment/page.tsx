@@ -278,8 +278,21 @@ export default function AssessmentPage() {
   const [validating, setValidating] = useState(false);
   const [demoSkipped, setDemoSkipped] = useState(false);
   const { enabled: assistantActive, setEnabled: setAssistantActive, speak } = useVoiceAssistant();
+  const [authChecking, setAuthChecking] = useState(true);
 
   useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        toast.error("Silakan masuk atau daftar terlebih dahulu untuk mengisi formulir validasi.", { duration: 4000 });
+        router.push("/login?redirect=/assessment");
+      } else {
+        setAuthChecking(false);
+      }
+    });
+  }, [router]);
+
+  useEffect(() => {
+    if (authChecking) return;
     const messages: Record<number, string> = {
       1: "Langkah pertama: Lengkapi profil usaha Anda.",
       2: "Langkah kedua: Masukkan data produk yang akan diekspor.",
@@ -434,6 +447,15 @@ export default function AssessmentPage() {
   const STEP_STYLE = { padding: "32px 40px 28px" };
 
   const t = TRANSLATIONS[form.bahasaDaerah] || TRANSLATIONS.id;
+
+  if (authChecking) {
+    return (
+      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#F3EDDF" }}>
+        <Loader2 size={40} style={{ animation: "spin 1s linear infinite", color: "#D4A017" }} />
+        <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+      </div>
+    );
+  }
 
   return (
     <div style={{ minHeight: "100vh", background: "#F3EDDF", display: "flex", flexDirection: "column", alignItems: "center" }}>

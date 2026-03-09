@@ -5,11 +5,11 @@ import { useState } from "react";
 import JourneyTracker from "@/components/JourneyTracker";
 
 const VIDEO_GUIDES = [
-  { id: 1, judul: "Kisah Bu Sari: Dari Dapur ke Jepang", durasi: "1:12", emoji: "👩‍🍳", deskripsi: "Bagaimana Bu Sari dari Bantul berhasil mengekspor keripik tempenya ke Jepang dengan bantuan DIGDAYA." },
-  { id: 2, judul: "Cara Foto Kemasan yang Benar", durasi: "0:58", emoji: "📸", deskripsi: "Tips praktis memfoto kemasan agar AI dapat membaca semua elemen label dengan akurat." },
-  { id: 3, judul: "Memahami Skor ERS Anda", durasi: "1:30", emoji: "📊", deskripsi: "Penjelasan 5 dimensi penilaian dan cara meningkatkan skor untuk menyamai standar ekspor." },
-  { id: 4, judul: "Cara Upload Dokumen Legalitas", durasi: "0:45", emoji: "📋", deskripsi: "Panduan foto dokumen NIE, PIRT, Halal MUI yang berkualitas cukup untuk verifikasi OCR." },
-  { id: 5, judul: "Mengajukan KUR Ekspor via DIGDAYA", durasi: "2:10", emoji: "🏦", deskripsi: "Langkah demi langkah menggunakan skor ERS sebagai bukti ajukan pembiayaan ekspor." },
+  { id: 1, judul: "OPTIMALKAN PRODUK GULA AREN HINGGA TEMBUS PASAR DUNIA", durasi: "1:12", emoji: "👩‍🍳", deskripsi: "I Gusti Ayu Ngurah Megawati, petani milenial asal Pacitan, Jawa Timur berhasil mengoptimalkan produksi gula aren hingga menembus pasar ekspor mancanegara.", youtubeUrl: "https://www.youtube.com/embed/dGuoitHsw24?autoplay=1", thumbnailUrl: "https://img.youtube.com/vi/dGuoitHsw24/maxresdefault.jpg" },
+  { id: 2, judul: "Tips Foto Produk Menggunakan HP Agar Terlihat Profesional", durasi: "5:21", emoji: "📸", deskripsi: "Cara praktis memfoto produk UMKM hanya dengan smartphone. Membuat kemasan lebih menonjol dan jelas terbaca.", youtubeUrl: "https://www.youtube.com/embed/99mynr-NWSs?autoplay=1", thumbnailUrl: "https://img.youtube.com/vi/99mynr-NWSs/maxresdefault.jpg" },
+  { id: 3, judul: "Cara Memulai Ekspor untuk UMKM (Standar Ekspor)", durasi: "3:45", emoji: "📊", deskripsi: "Pelajari kriteria, regulasi, dan dimensi penilaian standar kualitas agar produk UMKM Anda siap tembus pasar dunia.", youtubeUrl: "https://www.youtube.com/embed/J5Fm8veevgE?autoplay=1", thumbnailUrl: "https://img.youtube.com/vi/J5Fm8veevgE/maxresdefault.jpg" },
+  { id: 4, judul: "Tutorial Daftar Sertifikat Halal Gratis (SEHATI)", durasi: "4:12", emoji: "📋", deskripsi: "Langkah mudah mendaftar Sertifikat Halal Kemenag secara online (Self-Declare) khusus untuk pelaku Usaha Mikro dan Kecil.", youtubeUrl: "https://www.youtube.com/embed/Y1UAh5y5gus?autoplay=1", thumbnailUrl: "https://img.youtube.com/vi/Y1UAh5y5gus/maxresdefault.jpg" },
+  { id: 5, judul: "Syarat & Cara Mengajukan KUR Ekspor UMKM", durasi: "6:30", emoji: "🏦", deskripsi: "Panduan lengkap syarat administrasi pengajuan KUR sebagai modal tambahan untuk operasional ekspor UMKM.", youtubeUrl: "https://www.youtube.com/embed/UxE7TTW3EbU?autoplay=1", thumbnailUrl: "https://img.youtube.com/vi/UxE7TTW3EbU/maxresdefault.jpg" },
 ];
 
 export default function OnboardingPage() {
@@ -24,43 +24,43 @@ export default function OnboardingPage() {
         padding: "60px 24px 80px", textAlign: "center",
         position: "relative", overflow: "hidden",
       }} className="pattern-batik-dark">
-        <div style={{ maxWidth: 700, margin: "0 auto", position: "relative", zIndex: 2 }}>
+        <div style={{ maxWidth: 800, margin: "0 auto", position: "relative", zIndex: 2 }}>
           <div style={{ fontSize: 13, fontWeight: 600, color: "#D4A017", letterSpacing: "0.08em", marginBottom: 16 }}>PANDUAN MEMULAI</div>
           <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(28px, 4vw, 46px)", color: "#F5F0E8", marginBottom: 16, lineHeight: 1.2 }}>
             Selamat Datang di<br />
             <span style={{ color: "#D4A017" }}>DIGDAYA Export Advisor</span>
           </h1>
           <p style={{ fontSize: 17, color: "rgba(245,240,232,0.7)", marginBottom: 40 }}>
-            Tonton video panduan singkat ini, lalu mulai validasi ekspor Anda dalam 3 menit.
+            Tonton video panduan singkat ini, lalu mulai validasi ekspor Anda dalam 10 menit.
           </p>
 
-          {/* Main video placeholder */}
           <div style={{
             position: "relative", borderRadius: 20, overflow: "hidden",
             background: "linear-gradient(135deg, #1A3A5C, #0D2137)",
             border: "2px solid rgba(212,160,23,0.25)",
             boxShadow: "0 20px 60px rgba(0,0,0,0.4)",
             aspectRatio: "16/9", display: "flex", alignItems: "center", justifyContent: "center",
-            cursor: "pointer",
-          }} onClick={() => setActiveVideo(1)}>
-            {/* Sinematic background visual */}
-            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <div style={{ fontSize: 120, opacity: 0.08 }}>🌾</div>
-            </div>
-            <div style={{ position: "absolute", bottom: 24, left: 28, textAlign: "left" }}>
-              <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 18, color: "#F5F0E8" }}>Kisah Bu Sari</div>
-              <div style={{ fontSize: 13, color: "rgba(245,240,232,0.6)", marginTop: 2 }}>Dari Bantul ke Tokyo — Perjalanan Ekspor UMKM</div>
-            </div>
-            <button style={{
-              width: 72, height: 72, borderRadius: "50%",
-              background: "linear-gradient(135deg, #D4A017, #F0C040)",
-              border: "none", display: "flex", alignItems: "center", justifyContent: "center",
-              cursor: "pointer", boxShadow: "0 8px 30px rgba(212,160,23,0.5)",
-              position: "relative", zIndex: 2,
-              animation: "pulse-glow 2s ease-in-out infinite",
-            }}>
-              <Play size={28} color="#1A3A5C" fill="#1A3A5C" style={{ marginLeft: 3 }} />
-            </button>
+          }}>
+            <iframe 
+              width="100%" 
+              height="100%" 
+              src="https://www.youtube.com/embed/7yUitsWTqho?autoplay=0&rel=0" 
+              title="Wirausaha Muda Sukses Membangun Desa Lewat Produk Olahan Pisang Banana Chips" 
+              frameBorder="0" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              referrerPolicy="strict-origin-when-cross-origin" 
+              allowFullScreen
+              style={{ position: "absolute", inset: 0 }}
+            ></iframe>
+          </div>
+          
+          <div style={{ textAlign: "left", marginTop: 16 }}>
+             <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 20, color: "#F5F0E8" }}>
+               Wirausaha Muda Sukses Membangun Desa Lewat Produk Olahan Pisang Banana Chips
+             </h2>
+             <div style={{ fontSize: 14, color: "rgba(245,240,232,0.6)", marginTop: 6 }}>
+               Inspirasi sukses perjalanan ekspor UMKM lokal menuju pasar global
+             </div>
           </div>
         </div>
       </section>
@@ -104,11 +104,11 @@ export default function OnboardingPage() {
             >
               {/* Thumbnail */}
               <div style={{
-                height: 130, background: "linear-gradient(135deg, #1A3A5C, #2E6AA0)",
+                height: 130, background: v.thumbnailUrl ? `url(${v.thumbnailUrl}) center/cover no-repeat` : "linear-gradient(135deg, #1A3A5C, #2E6AA0)",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 position: "relative",
               }}>
-                <div style={{ fontSize: 52 }}>{v.emoji}</div>
+                {!v.thumbnailUrl && <div style={{ fontSize: 52 }}>{v.emoji}</div>}
                 <div style={{
                   position: "absolute", bottom: 10, right: 10,
                   background: "rgba(0,0,0,0.6)", color: "white",
@@ -150,11 +150,27 @@ export default function OnboardingPage() {
               <div style={{
                 aspectRatio: "16/9", background: "linear-gradient(135deg, #0D2137, #1A3A5C)",
                 display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16,
+                position: "relative",
               }}>
-                <div style={{ fontSize: 72 }}>{VIDEO_GUIDES.find(v => v.id === activeVideo)?.emoji}</div>
-                <div style={{ fontSize: 14, color: "rgba(245,240,232,0.6)", fontStyle: "italic" }}>
-                  [Demo Hackathon — Video akan diintegrasikan Cloudflare Stream]
-                </div>
+                {VIDEO_GUIDES.find(v => v.id === activeVideo)?.youtubeUrl ? (
+                  <iframe 
+                    width="100%" 
+                    height="100%" 
+                    src={VIDEO_GUIDES.find(v => v.id === activeVideo)?.youtubeUrl} 
+                    title={VIDEO_GUIDES.find(v => v.id === activeVideo)?.judul}
+                    frameBorder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                    allowFullScreen
+                    style={{ position: "absolute", inset: 0 }}
+                  ></iframe>
+                ) : (
+                  <>
+                    <div style={{ fontSize: 72 }}>{VIDEO_GUIDES.find(v => v.id === activeVideo)?.emoji}</div>
+                    <div style={{ fontSize: 14, color: "rgba(245,240,232,0.6)", fontStyle: "italic" }}>
+                      [Demo Hackathon — Video akan diintegrasikan Cloudflare Stream]
+                    </div>
+                  </>
+                )}
               </div>
               <div style={{ padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <div>
